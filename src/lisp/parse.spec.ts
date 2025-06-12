@@ -1,29 +1,29 @@
 import { describe, it } from "node:test";
-import { scan } from "./scan.ts";
 import { parse } from "./parse.ts";
 import { deepStrictEqual } from "node:assert/strict";
 import type { AST } from "./ast.ts";
+import type { Token } from "./token.ts";
 
 describe("parse", () => {
   it("should parse a simple number", () => {
-    const input = "42";
-    const tokens = scan(input);
+    const tokens: Token[] = [{ type: "Number", value: 42 }, { type: "EOL" }];
     const ast = parse(tokens);
     const expectedAst: AST[] = [{ type: "LiteralExpression", value: 42 }];
     deepStrictEqual(ast, expectedAst);
   });
 
   it("should parse a simple symbol", () => {
-    const input = "foo";
-    const tokens = scan(input);
+    const tokens: Token[] = [{ type: "Symbol", value: "foo" }, { type: "EOL" }];
     const ast = parse(tokens);
     const expectedAst: AST[] = [{ type: "SymbolExpression", name: "foo" }];
     deepStrictEqual(ast, expectedAst);
   });
 
   it("should parse a simple string", () => {
-    const input = '"hello world"';
-    const tokens = scan(input);
+    const tokens: Token[] = [
+      { type: "String", value: "hello world" },
+      { type: "EOL" },
+    ];
     const ast = parse(tokens);
     const expectedAst: AST[] = [
       { type: "LiteralExpression", value: "hello world" },
@@ -32,16 +32,21 @@ describe("parse", () => {
   });
 
   it("should parse a simple boolean", () => {
-    const input = "#t";
-    const tokens = scan(input);
+    const tokens: Token[] = [{ type: "Boolean", value: true }, { type: "EOL" }];
     const ast = parse(tokens);
     const expectedAst: AST[] = [{ type: "LiteralExpression", value: true }];
     deepStrictEqual(ast, expectedAst);
   });
 
   it("should parse a call expression", () => {
-    const input = "(+ 1 2)";
-    const tokens = scan(input);
+    const tokens: Token[] = [
+      { type: "LeftBracket" },
+      { type: "Symbol", value: "+" },
+      { type: "Number", value: 1 },
+      { type: "Number", value: 2 },
+      { type: "RightBracket" },
+      { type: "EOL" },
+    ];
     const ast = parse(tokens);
     const expectedAst: AST[] = [
       {
@@ -57,8 +62,18 @@ describe("parse", () => {
   });
 
   it("should parse a nested call expression", () => {
-    const input = "(+ 1 (* 2 3))";
-    const tokens = scan(input);
+    const tokens: Token[] = [
+      { type: "LeftBracket" },
+      { type: "Symbol", value: "+" },
+      { type: "Number", value: 1 },
+      { type: "LeftBracket" },
+      { type: "Symbol", value: "*" },
+      { type: "Number", value: 2 },
+      { type: "Number", value: 3 },
+      { type: "RightBracket" },
+      { type: "RightBracket" },
+      { type: "EOL" },
+    ];
     const ast = parse(tokens);
     const expectedAst: AST[] = [
       {
@@ -81,8 +96,14 @@ describe("parse", () => {
   });
 
   it("should parse a define expression", () => {
-    const input = "(define x 42)";
-    const tokens = scan(input);
+    const tokens: Token[] = [
+      { type: "LeftBracket" },
+      { type: "Symbol", value: "define" },
+      { type: "Symbol", value: "x" },
+      { type: "Number", value: 42 },
+      { type: "RightBracket" },
+      { type: "EOL" },
+    ];
     const ast = parse(tokens);
     const expectedAst: AST[] = [
       {
