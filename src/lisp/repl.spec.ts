@@ -40,4 +40,19 @@ describe("repl", () => {
     deepStrictEqual(repl("(define size 2)"), 2);
     deepStrictEqual(repl("size"), 2);
   });
+
+  it("should evaluate a define expression with a call", () => {
+    const repl = createRepl();
+    deepStrictEqual(repl("(define size (+ 2 3))"), 5);
+    deepStrictEqual(repl("size"), 5);
+  });
+
+  it("should evaluate a define expression with symbols", () => {
+    const repl = createRepl();
+    deepStrictEqual(repl("(define pi 3.14159)"), 3.14159);
+    deepStrictEqual(repl("(define radius 10"), 10);
+    deepStrictEqual(repl("(* pi (* radius radius))"), 314.159);
+    deepStrictEqual(repl("(define circumference (* 2 pi radius))"), 62.8318);
+    deepStrictEqual(repl("circumference"), 62.8318);
+  });
 });
