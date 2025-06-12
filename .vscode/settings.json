@@ -1,0 +1,15 @@
+{
+  "workbench.colorTheme": "Default Dark Modern",
+  "editor.renderWhitespace": "all",
+  "files.autoSave": "afterDelay",
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "nodejs-testing.extensions": [
+    {
+      "extensions": ["ts"],
+      "filePatterns": ["**/*.spec.ts"],
+      "parameters": ["--experimental-strip-types"]
+    }
+  ],
+  "editor.tabSize": 2
+}
