@@ -1,7 +1,7 @@
 export type CallExpression = {
   type: "CallExpression";
   callee: string;
-  args: any[];
+  args: AST[];
 };
 
 export type DefineExpression = {
@@ -24,9 +24,9 @@ export type AtomExpression = SymbolExpression | LiteralExpression;
 
 export type IfExpression = {
   type: "IfExpression";
-  condition: any;
-  thenBranch: any;
-  elseBranch: any;
+  condition: AST;
+  thenBranch: AST;
+  elseBranch: AST | null;
 };
 
 export type AST =
