@@ -1,4 +1,4 @@
-import type { AST } from "./ast.ts";
+import type { AST } from "../ast.ts";
 
 export type Env = Map<string, any>;
 

@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
 import { parse } from "./parse.ts";
 import { deepStrictEqual } from "node:assert/strict";
-import type { AST } from "./ast.ts";
+import type { AST } from "../ast.ts";
 import type { Token } from "./token.ts";
 
 describe("parse", () => {

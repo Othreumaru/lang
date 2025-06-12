@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
 import { print } from "./print.ts";
 import { deepStrictEqual } from "node:assert/strict";
-import type { AST } from "./ast.ts";
+import type { AST } from "../ast.ts";
 
 describe("print", () => {
   it("should print a simple number", () => {

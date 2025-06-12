@@ -1,5 +1,4 @@
-import { count } from "console";
-import type { AST } from "./ast";
+import type { AST } from "../ast";
 
 const isAllArgsAtom = (args: AST[]): boolean => {
   return args.every(

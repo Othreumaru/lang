@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
 import { interpret } from "./interpret.ts";
 import { deepStrictEqual } from "node:assert/strict";
-import type { AST } from "./ast.ts";
+import type { AST } from "../ast.ts";
 
 describe("interpret", () => {
   it("should interpret a simple number", () => {

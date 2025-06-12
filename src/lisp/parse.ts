@@ -4,7 +4,7 @@ import type {
   CallExpression,
   DefineExpression,
   IfExpression,
-} from "./ast.ts";
+} from "../ast.ts";
 import type { Token } from "./token.ts";
 
 export const parse = (tokens: Token[]): AST[] => {
