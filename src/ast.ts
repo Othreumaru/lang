@@ -4,6 +4,12 @@ export type CallExpression = {
   args: AST[];
 };
 
+export type LetExpression = {
+  type: "LetExpression";
+  bindings: { name: string; expression: AST }[];
+  body: AST;
+};
+
 export type DefineExpression = {
   type: "DefineExpression";
   name: string;
@@ -40,5 +46,6 @@ export type AST =
   | DefineExpression
   | DefineFunctionExpression
   | CallExpression
+  | LetExpression
   | IfExpression
   | AtomExpression;

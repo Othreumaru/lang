@@ -138,4 +138,27 @@ describe("parse", () => {
     ];
     deepStrictEqual(ast, expectedAst);
   });
+
+  it("should parse a let expression", () => {
+    const tokens: Token[] = [
+      { type: "LeftBracket" },
+      { type: "Symbol", value: "let" },
+      { type: "LeftBracket" },
+      { type: "Symbol", value: "x" },
+      { type: "Number", value: 10 },
+      { type: "RightBracket" },
+      { type: "Number", value: 20 },
+      { type: "RightBracket" },
+      { type: "EOL" },
+    ];
+    const ast = parse(tokens);
+    const expectedAst: AST[] = [
+      {
+        type: "LetExpression",
+        bindings: [{ name: "x", expression: { type: "LiteralExpression", value: 10 } }],
+        body: { type: "LiteralExpression", value: 20 },
+      },
+    ];
+    deepStrictEqual(ast, expectedAst);
+  });
 });

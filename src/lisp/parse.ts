@@ -128,6 +128,21 @@ export const parse = (tokens: Token[]): AST[] => {
     return { type: "DefineFunctionExpression", name, params, body };
   };
 
+  const consumeLetExpression = (): AST => {
+    consumeAnyToken(); // consume "let"
+    const bindings: { name: string; expression: AST }[] = [];
+    consumeTokenOrThrow("LeftBracket"); // consume the opening bracket
+    while (!isAtEnd() && !consumeToken("RightBracket")) {
+      const nameToken = consumeTokenOrThrow("Symbol");
+      const name = nameToken.value;
+      const expr = consumeExpression();
+      bindings.push({ name, expression: expr });
+    }
+    const body = consumeExpression();
+    consumeToken("RightBracket"); // consume the closing bracket
+    return { type: "LetExpression", bindings, body };
+  };
+
   const consumeExpression = (): AST => {
     if (consumeToken("LeftBracket")) {
       if (consumeToken("RightBracket")) {
@@ -143,6 +158,9 @@ export const parse = (tokens: Token[]): AST[] => {
           return consumeDefineFunctionExpression();
         }
         return consumeDefineExpression();
+      }
+      if (token.type === "Symbol" && token.value === "let") {
+        return consumeLetExpression();
       }
       return consumeCallExpression();
     }
