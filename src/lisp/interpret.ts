@@ -1,14 +1,8 @@
 import type { AST } from "../ast.ts";
+import type { IEnvironment } from "./environment.ts";
+import { defaultEnv } from "./environment.ts";
 
-export type Env = Map<string, any>;
-
-export const defaultEnv: Env = new Map<string, any>();
-defaultEnv.set("+", (...nums: number[]) => nums.reduce((a, b) => a + b, 0));
-defaultEnv.set("-", (...nums: number[]) => nums.reduce((a, b) => a - b));
-defaultEnv.set("*", (...nums: number[]) => nums.reduce((a, b) => a * b, 1));
-defaultEnv.set("/", (...nums: number[]) => nums.reduce((a, b) => a / b));
-
-export const interpret = (node: AST, env: Env = defaultEnv): any => {
+export const interpret = (node: AST, env: IEnvironment = defaultEnv): any => {
   if (node.type === "DefineExpression") {
     const value = interpret(node.expression, env);
     env.set(node.name, value);
@@ -36,7 +30,10 @@ export const interpret = (node: AST, env: Env = defaultEnv): any => {
   throw new Error(`Unknown AST node type: ${node.type}`);
 };
 
-export const interpretAll = (ast: AST[], env: Env = defaultEnv): any => {
+export const interpretAll = (
+  ast: AST[],
+  env: IEnvironment = defaultEnv
+): any => {
   let result: any = null;
   for (const node of ast) {
     result = interpret(node, env);
