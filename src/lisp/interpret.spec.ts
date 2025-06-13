@@ -65,4 +65,38 @@ describe("interpret", () => {
     const result = interpret(ast);
     deepStrictEqual(result, 42);
   });
+
+  it("should interpret a symbol expression", () => {
+    const ast: AST = {
+      type: "SymbolExpression",
+      name: "x",
+    };
+    const env = {
+      has: (name: string) => name === "x",
+      get: (name: string) => 42,
+      set: () => {},
+    };
+    const result = interpret(ast, env);
+    deepStrictEqual(result, 42);
+  });
+
+  it("should interpret a let expression", () => {
+    const ast: AST = {
+      type: "LetExpression",
+      bindings: [
+        { name: "x", expression: { type: "LiteralExpression", value: 10 } },
+        { name: "y", expression: { type: "LiteralExpression", value: 20 } },
+      ],
+      body: {
+        type: "CallExpression",
+        callee: "+",
+        args: [
+          { type: "SymbolExpression", name: "x" },
+          { type: "SymbolExpression", name: "y" },
+        ],
+      },
+    };
+    const result = interpret(ast);
+    deepStrictEqual(result, 30);
+  });
 });

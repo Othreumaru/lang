@@ -1,6 +1,6 @@
 import type { AST } from "../ast.ts";
 import type { IEnvironment } from "./environment.ts";
-import { defaultEnv } from "./environment.ts";
+import { defaultEnv, Environment } from "./environment.ts";
 
 export const interpret = (node: AST, env: IEnvironment = defaultEnv): any => {
   if (node.type === "DefineExpression") {
@@ -19,6 +19,14 @@ export const interpret = (node: AST, env: IEnvironment = defaultEnv): any => {
     } else {
       throw new Error(`Function ${node.callee} is not defined`);
     }
+  }
+  if (node.type === "LetExpression") {
+    const localEnv = new Environment(
+      node.bindings.map((b) => b.name),
+      node.bindings.map((b) => interpret(b.expression, env)),
+      env
+    );
+    return interpret(node.body, localEnv);
   }
   if (node.type === "SymbolExpression") {
     if (env.has(node.name)) {
