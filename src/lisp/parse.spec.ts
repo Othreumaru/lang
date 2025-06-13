@@ -114,4 +114,28 @@ describe("parse", () => {
     ];
     deepStrictEqual(ast, expectedAst);
   });
+
+  it("should parse a define function expression", () => {
+    const tokens: Token[] = [
+      { type: "LeftBracket" },
+      { type: "Symbol", value: "define" },
+      { type: "LeftBracket" },
+      { type: "Symbol", value: "foo" },
+      { type: "Symbol", value: "bar" },
+      { type: "RightBracket" },
+      { type: "Number", value: 42 },
+      { type: "RightBracket" },
+      { type: "EOL" },
+    ];
+    const ast = parse(tokens);
+    const expectedAst: AST[] = [
+      {
+        type: "DefineFunctionExpression",
+        name: "foo",
+        params: ["bar"],
+        body: { type: "LiteralExpression", value: 42 },
+      },
+    ];
+    deepStrictEqual(ast, expectedAst);
+  });
 });

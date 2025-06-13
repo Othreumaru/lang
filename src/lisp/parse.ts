@@ -3,6 +3,7 @@ import type {
   AtomExpression,
   CallExpression,
   DefineExpression,
+  DefineFunctionExpression,
   IfExpression,
 } from "../ast.ts";
 import type { Token } from "./token.ts";
@@ -10,9 +11,9 @@ import type { Token } from "./token.ts";
 export const parse = (tokens: Token[]): AST[] => {
   let index = 0;
 
-  const peek = (): Token => {
-    if (index < tokens.length) {
-      return tokens[index];
+  const peek = (offset: number = 0): Token => {
+    if (index + offset < tokens.length) {
+      return tokens[index + offset];
     }
     throw new Error("Unexpected end of input");
   };
@@ -21,8 +22,11 @@ export const parse = (tokens: Token[]): AST[] => {
     return peek().type === "EOL";
   };
 
-  const isTokenType = (type: Token["type"]): boolean => {
-    return peek().type === type;
+  const isTokenOfType = <T extends Token["type"]>(
+    token: Token,
+    type: T
+  ): token is Extract<Token, { type: T }> => {
+    return token.type === type;
   };
 
   const consumeAnyToken = (): Token => {
@@ -31,12 +35,25 @@ export const parse = (tokens: Token[]): AST[] => {
     return token;
   };
 
-  const consumeToken = (type: Token["type"]): boolean => {
-    if (isTokenType(type)) {
+  const consumeToken = <T extends Token["type"]>(
+    type: T
+  ): Extract<Token, { type: T }> | null => {
+    const token = peek();
+    if (isTokenOfType(token, type)) {
       index++;
-      return true;
+      return token;
     }
-    return false;
+    return null;
+  };
+
+  const consumeTokenOrThrow = <T extends Token["type"]>(
+    type: T
+  ): Extract<Token, { type: T }> => {
+    const token = consumeToken(type);
+    if (!token) {
+      throw new Error(`Expected token of type ${type}, but found none`);
+    }
+    return token;
   };
 
   const consumeIfExpression = (): IfExpression => {
@@ -96,6 +113,21 @@ export const parse = (tokens: Token[]): AST[] => {
     return { type: "DefineExpression", name, expression: expr };
   };
 
+  const consumeDefineFunctionExpression = (): DefineFunctionExpression => {
+    consumeAnyToken(); // consume "define"
+    const params: string[] = [];
+    consumeTokenOrThrow("LeftBracket"); // consume the opening bracket
+    const nameToken = consumeTokenOrThrow("Symbol");
+    const name = nameToken.value;
+    while (!isAtEnd() && !consumeToken("RightBracket")) {
+      const paramToken = consumeTokenOrThrow("Symbol");
+      params.push(paramToken.value);
+    }
+    const body = consumeExpression();
+    consumeToken("RightBracket"); // consume the closing bracket
+    return { type: "DefineFunctionExpression", name, params, body };
+  };
+
   const consumeExpression = (): AST => {
     if (consumeToken("LeftBracket")) {
       if (consumeToken("RightBracket")) {
@@ -106,6 +138,10 @@ export const parse = (tokens: Token[]): AST[] => {
         return consumeIfExpression();
       }
       if (token.type === "Symbol" && token.value === "define") {
+        const nextToken = peek(1);
+        if (nextToken.type === "LeftBracket") {
+          return consumeDefineFunctionExpression();
+        }
         return consumeDefineExpression();
       }
       return consumeCallExpression();

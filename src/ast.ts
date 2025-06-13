@@ -10,6 +10,13 @@ export type DefineExpression = {
   expression: AST;
 };
 
+export type DefineFunctionExpression = {
+  type: "DefineFunctionExpression";
+  name: string;
+  params: string[];
+  body: AST;
+};
+
 export type SymbolExpression = {
   type: "SymbolExpression";
   name: string;
@@ -31,6 +38,7 @@ export type IfExpression = {
 
 export type AST =
   | DefineExpression
+  | DefineFunctionExpression
   | CallExpression
   | IfExpression
   | AtomExpression;
