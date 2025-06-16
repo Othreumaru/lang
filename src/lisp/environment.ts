@@ -62,3 +62,4 @@ defaultEnv.set(">", (...nums: number[]) =>
 defaultEnv.set("<", (...nums: number[]) =>
   nums.slice(1).every((n) => nums[0] < n)
 );
+defaultEnv.set("not", (value: boolean) => !value);

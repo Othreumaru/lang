@@ -18,6 +18,7 @@ describe("repl", () => {
     deepStrictEqual(repl("(+ 2.7 10)"), 12.7);
     deepStrictEqual(repl("(+ 21 35 12 7)"), 75);
     deepStrictEqual(repl("(* 25 4 12)"), 1200);
+    deepStrictEqual(repl("(not #t)"), false);
   });
 
   it("should evaluate a nested call expression", () => {
