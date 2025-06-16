@@ -161,6 +161,26 @@ export const parse = (tokens: Token[]): AST[] => {
     return { type: "LetExpression", bindings, body };
   };
 
+  const consumeAndExpression = (): AST => {
+    consumeAnyToken(); // consume "and"
+    const conditions: AST[] = [];
+    while (!isAtEnd() && !consumeToken("RightBracket")) {
+      conditions.push(consumeExpression());
+    }
+    consumeToken("RightBracket"); // consume the closing bracket
+    return { type: "AndExpression", conditions };
+  };
+
+  const consumeOrExpression = (): AST => {
+    consumeAnyToken(); // consume "or"
+    const conditions: AST[] = [];
+    while (!isAtEnd() && !consumeToken("RightBracket")) {
+      conditions.push(consumeExpression());
+    }
+    consumeToken("RightBracket"); // consume the closing bracket
+    return { type: "OrExpression", conditions };
+  };
+
   const consumeExpression = (): AST => {
     if (consumeToken("LeftBracket")) {
       if (consumeToken("RightBracket")) {
@@ -179,6 +199,12 @@ export const parse = (tokens: Token[]): AST[] => {
           return consumeDefineFunctionExpression();
         }
         return consumeDefineExpression();
+      }
+      if (token.type === "Symbol" && token.value === "and") {
+        return consumeAndExpression();
+      }
+      if (token.type === "Symbol" && token.value === "or") {
+        return consumeOrExpression();
       }
       if (token.type === "Symbol" && token.value === "let") {
         return consumeLetExpression();

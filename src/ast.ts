@@ -42,6 +42,16 @@ export type IfExpression = {
   elseBranch: AST | null;
 };
 
+export type AndExpression = {
+  type: "AndExpression";
+  conditions: AST[];
+};
+
+export type OrExpression = {
+  type: "OrExpression";
+  conditions: AST[];
+};
+
 export type CondExpression = {
   type: "CondExpression";
   clauses: { condition: AST; thenBranch: AST }[];
@@ -54,4 +64,6 @@ export type AST =
   | LetExpression
   | IfExpression
   | CondExpression
+  | AndExpression
+  | OrExpression
   | AtomExpression;

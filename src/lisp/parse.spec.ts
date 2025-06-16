@@ -219,4 +219,48 @@ describe("parse", () => {
     ];
     deepStrictEqual(ast, expectedAst);
   });
+
+  it("should parse an and expression", () => {
+    const tokens: Token[] = [
+      { type: "LeftBracket" },
+      { type: "Symbol", value: "and" },
+      { type: "Boolean", value: true },
+      { type: "Boolean", value: false },
+      { type: "RightBracket" },
+      { type: "EOL" },
+    ];
+    const ast = parse(tokens);
+    const expectedAst: AST[] = [
+      {
+        type: "AndExpression",
+        conditions: [
+          { type: "LiteralExpression", value: true },
+          { type: "LiteralExpression", value: false },
+        ],
+      },
+    ];
+    deepStrictEqual(ast, expectedAst);
+  });
+
+  it("should parse an or expression", () => {
+    const tokens: Token[] = [
+      { type: "LeftBracket" },
+      { type: "Symbol", value: "or" },
+      { type: "Boolean", value: true },
+      { type: "Boolean", value: false },
+      { type: "RightBracket" },
+      { type: "EOL" },
+    ];
+    const ast = parse(tokens);
+    const expectedAst: AST[] = [
+      {
+        type: "OrExpression",
+        conditions: [
+          { type: "LiteralExpression", value: true },
+          { type: "LiteralExpression", value: false },
+        ],
+      },
+    ];
+    deepStrictEqual(ast, expectedAst);
+  });
 });
