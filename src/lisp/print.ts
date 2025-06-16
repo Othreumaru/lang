@@ -39,6 +39,11 @@ export const print = (ast: AST, indentCount = 0): string => {
             `${indent(indentCount + 2)}(${print(clause.condition)} ${print(clause.thenBranch)})`
         )
         .join("\n")}\n${indent(indentCount)})`;
+    case "IfExpression":
+      const elsePart = ast.elseBranch
+        ? `\n${indent(indentCount + 2)}${print(ast.elseBranch)}`
+        : "";
+      return `(if ${print(ast.condition)} \n${indent(indentCount + 2)}${print(ast.thenBranch)}${elsePart}\n${indent(indentCount)})`;
     default:
       throw new Error(`Unknown AST node type: ${ast.type}`);
   }

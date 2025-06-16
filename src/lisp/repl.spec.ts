@@ -83,7 +83,25 @@ describe("repl", () => {
     deepStrictEqual(repl("(if (= 1 2) 1 0)"), 0);
   });
 
-  it("should evaluate a complex if expression", () => {
+  it("should evaluate a nested if expression", () => {
+    const repl = createRepl();
+    deepStrictEqual(
+      repl(`
+      (define (abs x)
+        (if (> x 0)
+          x
+          (- x)))
+    `),
+      `[function (abs x) (if (> x 0) 
+  x
+  (- x)
+)]`
+    );
+    deepStrictEqual(repl("(abs -5)"), 5);
+    deepStrictEqual(repl("(abs 5)"), 5);
+  });
+
+  it("should evaluate a cond expression", () => {
     const repl = createRepl();
     deepStrictEqual(
       repl(`
