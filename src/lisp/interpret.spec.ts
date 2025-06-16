@@ -13,7 +13,7 @@ describe("interpret", () => {
     deepStrictEqual(result, 486);
   });
 
-  it("should interpret a call expression", () => {
+  it("should interpret a + call expression", () => {
     const ast: AST = {
       type: "CallExpression",
       callee: "+",
@@ -24,6 +24,45 @@ describe("interpret", () => {
     };
     const result = interpret(ast);
     deepStrictEqual(result, 486);
+  });
+
+  it("should interpret a > call expression", () => {
+    const ast: AST = {
+      type: "CallExpression",
+      callee: ">",
+      args: [
+        { type: "LiteralExpression", value: 10 },
+        { type: "LiteralExpression", value: 5 },
+      ],
+    };
+    const result = interpret(ast);
+    deepStrictEqual(result, true);
+  });
+
+  it("should interpret a < call expression", () => {
+    const ast: AST = {
+      type: "CallExpression",
+      callee: "<",
+      args: [
+        { type: "LiteralExpression", value: 10 },
+        { type: "LiteralExpression", value: 5 },
+      ],
+    };
+    const result = interpret(ast);
+    deepStrictEqual(result, false);
+  });
+
+  it("should interpret a < call expression", () => {
+    const ast: AST = {
+      type: "CallExpression",
+      callee: "<",
+      args: [
+        { type: "LiteralExpression", value: 1000 },
+        { type: "LiteralExpression", value: 334 },
+      ],
+    };
+    const result = interpret(ast);
+    deepStrictEqual(result, false);
   });
 
   it("should interpret a nested call expression", () => {

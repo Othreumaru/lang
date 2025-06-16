@@ -155,8 +155,66 @@ describe("parse", () => {
     const expectedAst: AST[] = [
       {
         type: "LetExpression",
-        bindings: [{ name: "x", expression: { type: "LiteralExpression", value: 10 } }],
+        bindings: [
+          { name: "x", expression: { type: "LiteralExpression", value: 10 } },
+        ],
         body: { type: "LiteralExpression", value: 20 },
+      },
+    ];
+    deepStrictEqual(ast, expectedAst);
+  });
+
+  it("should parse an if expression", () => {
+    const tokens: Token[] = [
+      { type: "LeftBracket" },
+      { type: "Symbol", value: "if" },
+      { type: "Boolean", value: true },
+      { type: "Number", value: 1 },
+      { type: "Number", value: 0 },
+      { type: "RightBracket" },
+      { type: "EOL" },
+    ];
+    const ast = parse(tokens);
+    const expectedAst: AST[] = [
+      {
+        type: "IfExpression",
+        condition: { type: "LiteralExpression", value: true },
+        thenBranch: { type: "LiteralExpression", value: 1 },
+        elseBranch: { type: "LiteralExpression", value: 0 },
+      },
+    ];
+    deepStrictEqual(ast, expectedAst);
+  });
+
+  it("should parse a cond expression", () => {
+    const tokens: Token[] = [
+      { type: "LeftBracket" },
+      { type: "Symbol", value: "cond" },
+      { type: "LeftBracket" },
+      { type: "Boolean", value: true },
+      { type: "Number", value: 1 },
+      { type: "RightBracket" },
+      { type: "LeftBracket" },
+      { type: "Boolean", value: false },
+      { type: "Number", value: 0 },
+      { type: "RightBracket" },
+      { type: "RightBracket" },
+      { type: "EOL" },
+    ];
+    const ast = parse(tokens);
+    const expectedAst: AST[] = [
+      {
+        type: "CondExpression",
+        clauses: [
+          {
+            condition: { type: "LiteralExpression", value: true },
+            thenBranch: { type: "LiteralExpression", value: 1 },
+          },
+          {
+            condition: { type: "LiteralExpression", value: false },
+            thenBranch: { type: "LiteralExpression", value: 0 },
+          },
+        ],
       },
     ];
     deepStrictEqual(ast, expectedAst);

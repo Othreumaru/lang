@@ -10,6 +10,13 @@ describe("scan", () => {
     deepStrictEqual(tokens, expectedTokens);
   });
 
+  it("should tokenize a negative number", () => {
+    const input = "-42";
+    const tokens = scan(input);
+    const expectedTokens = [{ type: "Number", value: -42 }, { type: "EOL" }];
+    deepStrictEqual(tokens, expectedTokens);
+  });
+
   it("should tokenize a floating number", () => {
     const input = "3.14";
     const tokens = scan(input);

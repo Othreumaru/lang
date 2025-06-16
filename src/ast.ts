@@ -42,10 +42,16 @@ export type IfExpression = {
   elseBranch: AST | null;
 };
 
+export type CondExpression = {
+  type: "CondExpression";
+  clauses: { condition: AST; thenBranch: AST }[];
+};
+
 export type AST =
   | DefineExpression
   | DefineFunctionExpression
   | CallExpression
   | LetExpression
   | IfExpression
+  | CondExpression
   | AtomExpression;

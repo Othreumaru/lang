@@ -16,7 +16,7 @@ const isIdentifier = (char: string): boolean => {
   return (
     (char >= "a" && char <= "z") ||
     (char >= "A" && char <= "Z") ||
-    ["*", "-", "+", "/", "=", "?"].includes(char)
+    ["*", "-", "+", "/", "=", "?", "<", ">"].includes(char)
   );
 };
 
@@ -24,9 +24,9 @@ export const scan = (input: string): Token[] => {
   let index = 0;
   const tokens: Token[] = [];
 
-  const peek = (): string | undefined => {
-    if (index < input.length) {
-      return input[index];
+  const peek = (offset: number = 0): string | undefined => {
+    if (index + offset < input.length) {
+      return input[index + offset];
     }
     return undefined;
   };
@@ -46,6 +46,20 @@ export const scan = (input: string): Token[] => {
       return true;
     }
     return false;
+  };
+
+  const consumeDigit = (): void => {
+    let numStr = "";
+    if (peek() === "-") {
+      consume("-");
+      numStr += "-";
+    }
+    numStr += consumeWhile(isDigit);
+    if (consume(".")) {
+      numStr += ".";
+      numStr += consumeWhile(isDigit);
+    }
+    tokens.push({ type: "Number", value: parseFloat(numStr) });
   };
 
   while (index < input.length) {
@@ -94,12 +108,9 @@ export const scan = (input: string): Token[] => {
           throw new Error("Unexpected end of input");
         }
         if (isDigit(char)) {
-          let numStr = consumeWhile(isDigit);
-          if (consume(".")) {
-            numStr += ".";
-            numStr += consumeWhile(isDigit);
-          }
-          tokens.push({ type: "Number", value: parseFloat(numStr) });
+          consumeDigit();
+        } else if (char === "-" && isDigit(peek(1)!)) {
+          consumeDigit();
         } else if (isIdentifier(char)) {
           let symbol = consumeWhile(isIdentifier);
           tokens.push({ type: "Symbol", value: symbol });

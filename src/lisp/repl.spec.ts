@@ -74,4 +74,31 @@ describe("repl", () => {
     deepStrictEqual(repl("(sum-of-squares 3 4)"), 25);
     deepStrictEqual(repl("(sum-of-squares 5 12)"), 169);
   });
+
+  it("should evaluate an if expression", () => {
+    const repl = createRepl();
+    deepStrictEqual(repl("(if #t 1 0)"), 1);
+    deepStrictEqual(repl("(if #f 1 0)"), 0);
+    deepStrictEqual(repl("(if (= 1 1) 1 0)"), 1);
+    deepStrictEqual(repl("(if (= 1 2) 1 0)"), 0);
+  });
+
+  it("should evaluate a complex if expression", () => {
+    const repl = createRepl();
+    deepStrictEqual(
+      repl(`
+      (define (abs x)
+        (cond ((> x 0) x)
+          ((= x 0) 0)
+          ((< x 0) (- x))))
+    `),
+      `[function (abs x) (cond 
+  ((> x 0) x)
+  ((= x 0) 0)
+  ((< x 0) (- x))
+)]`
+    );
+    deepStrictEqual(repl("(abs -5)"), 5);
+    deepStrictEqual(repl("(abs 5)"), 5);
+  });
 });

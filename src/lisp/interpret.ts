@@ -44,7 +44,24 @@ export const interpret = (node: AST, env: IEnvironment = defaultEnv): any => {
       throw new Error(`Symbol ${node.name} is not defined`);
     }
   }
-  throw new Error(`Unknown AST node type: ${node.type}`);
+  if (node.type === "IfExpression") {
+    const condition = interpret(node.condition, env);
+    if (condition) {
+      return interpret(node.thenBranch, env);
+    } else if (node.elseBranch) {
+      return interpret(node.elseBranch, env);
+    }
+    return null;
+  }
+  if (node.type === "CondExpression") {
+    for (const clause of node.clauses) {
+      const condition = interpret(clause.condition, env);
+      if (condition) {
+        return interpret(clause.thenBranch, env);
+      }
+    }
+    return null; // No conditions matched
+  }
 };
 
 export const interpretAll = (

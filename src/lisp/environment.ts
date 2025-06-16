@@ -47,6 +47,18 @@ export class Environment implements IEnvironment {
 
 export const defaultEnv: IEnvironment = new Environment();
 defaultEnv.set("+", (...nums: number[]) => nums.reduce((a, b) => a + b, 0));
-defaultEnv.set("-", (...nums: number[]) => nums.reduce((a, b) => a - b));
+defaultEnv.set("-", (...nums: number[]) => {
+  if (nums.length === 1) {
+    return -nums[0];
+  }
+  return nums.reduce((a, b) => a - b);
+});
 defaultEnv.set("*", (...nums: number[]) => nums.reduce((a, b) => a * b, 1));
 defaultEnv.set("/", (...nums: number[]) => nums.reduce((a, b) => a / b));
+defaultEnv.set("=", (...nums: number[]) => nums.every((n) => n === nums[0]));
+defaultEnv.set(">", (...nums: number[]) =>
+  nums.slice(1).every((n) => nums[0] > n)
+);
+defaultEnv.set("<", (...nums: number[]) =>
+  nums.slice(1).every((n) => nums[0] < n)
+);

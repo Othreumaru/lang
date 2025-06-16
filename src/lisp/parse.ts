@@ -2,6 +2,7 @@ import type {
   AST,
   AtomExpression,
   CallExpression,
+  CondExpression,
   DefineExpression,
   DefineFunctionExpression,
   IfExpression,
@@ -64,12 +65,29 @@ export const parse = (tokens: Token[]): AST[] => {
     if (!consumeToken("RightBracket")) {
       elseBranch = consumeExpression();
     }
+    consumeToken("RightBracket"); // consume the closing bracket
     return {
       type: "IfExpression",
       condition,
       thenBranch,
       elseBranch,
     };
+  };
+
+  const consumeCondExpression = (): CondExpression => {
+    consumeAnyToken(); // consume "cond"
+    const clauses: CondExpression["clauses"] = [];
+    while (!isAtEnd() && !consumeToken("RightBracket")) {
+      consumeTokenOrThrow("LeftBracket"); // consume the opening bracket for each clause
+      const condition = consumeExpression();
+      const body = consumeExpression();
+      if (!consumeToken("RightBracket")) {
+        throw new Error("Expected closing bracket for cond clause");
+      }
+      clauses.push({ condition, thenBranch: body });
+    }
+    consumeToken("RightBracket"); // consume the closing bracket
+    return { type: "CondExpression", clauses };
   };
 
   const consumeCallExpression = (): CallExpression => {
@@ -151,6 +169,9 @@ export const parse = (tokens: Token[]): AST[] => {
       const token = peek();
       if (token.type === "Symbol" && token.value === "if") {
         return consumeIfExpression();
+      }
+      if (token.type === "Symbol" && token.value === "cond") {
+        return consumeCondExpression();
       }
       if (token.type === "Symbol" && token.value === "define") {
         const nextToken = peek(1);

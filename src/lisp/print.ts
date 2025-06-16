@@ -32,6 +32,13 @@ export const print = (ast: AST, indentCount = 0): string => {
         return ast.value ? "#t" : "#f";
       }
       return JSON.stringify(ast.value);
+    case "CondExpression":
+      return `(cond \n${ast.clauses
+        .map(
+          (clause) =>
+            `${indent(indentCount + 2)}(${print(clause.condition)} ${print(clause.thenBranch)})`
+        )
+        .join("\n")}\n${indent(indentCount)})`;
     default:
       throw new Error(`Unknown AST node type: ${ast.type}`);
   }
