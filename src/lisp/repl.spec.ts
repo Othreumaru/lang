@@ -55,4 +55,23 @@ describe("repl", () => {
     deepStrictEqual(repl("(define circumference (* 2 pi radius))"), 62.8318);
     deepStrictEqual(repl("circumference"), 62.8318);
   });
+
+  it("should evaluate a define function expression", () => {
+    const repl = createRepl();
+    deepStrictEqual(
+      repl("(define (square x) (* x x))"),
+      "[function (square x) (* x x)]"
+    );
+    deepStrictEqual(repl("(square 5)"), 25);
+    deepStrictEqual(repl("(square 10)"), 100);
+    deepStrictEqual(
+      repl("(define (sum-of-squares x y) (+ (square x) (square y)))"),
+      `[function (sum-of-squares x y) (+ 
+  (square x)
+  (square y)
+)]`
+    );
+    deepStrictEqual(repl("(sum-of-squares 3 4)"), 25);
+    deepStrictEqual(repl("(sum-of-squares 5 12)"), 169);
+  });
 });

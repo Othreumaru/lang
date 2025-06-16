@@ -1,5 +1,6 @@
 import type { AST } from "../ast.ts";
 import type { IEnvironment } from "./environment.ts";
+import { print } from "./print.ts";
 import { defaultEnv, Environment } from "./environment.ts";
 
 export const interpret = (node: AST, env: IEnvironment = defaultEnv): any => {
@@ -7,6 +8,14 @@ export const interpret = (node: AST, env: IEnvironment = defaultEnv): any => {
     const value = interpret(node.expression, env);
     env.set(node.name, value);
     return value;
+  }
+  if (node.type === "DefineFunctionExpression") {
+    const func = (...args: any[]) => {
+      const localEnv = new Environment(node.params, args, env);
+      return interpret(node.body, localEnv);
+    };
+    env.set(node.name, func);
+    return `[function (${node.name} ${node.params.join(" ")}) ${print(node.body)}]`;
   }
   if (node.type === "LiteralExpression") {
     return node.value;
