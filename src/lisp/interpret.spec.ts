@@ -138,4 +138,26 @@ describe("interpret", () => {
     const result = interpret(ast);
     deepStrictEqual(result, 30);
   });
+
+  it("should interpret an cond expression with else", () => {
+    const ast: AST = {
+      type: "CondExpression",
+      clauses: [
+        {
+          condition: { type: "LiteralExpression", value: false },
+          thenBranch: { type: "LiteralExpression", value: 1 },
+        },
+        {
+          condition: { type: "LiteralExpression", value: false },
+          thenBranch: { type: "LiteralExpression", value: 0 },
+        },
+        {
+          condition: { type: "SymbolExpression", name: "else" },
+          thenBranch: { type: "LiteralExpression", value: -1 },
+        },
+      ],
+    };
+    const result = interpret(ast);
+    deepStrictEqual(result, -1);
+  });
 });

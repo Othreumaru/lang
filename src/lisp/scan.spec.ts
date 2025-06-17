@@ -79,6 +79,20 @@ describe("scan", () => {
     deepStrictEqual(tokens, expectedTokens);
   });
 
+  it("should tokenize a call expression", () => {
+    const input = "(<= 1 2)";
+    const tokens = scan(input);
+    const expectedTokens = [
+      { type: "LeftBracket" },
+      { type: "Symbol", value: "<=" },
+      { type: "Number", value: 1 },
+      { type: "Number", value: 2 },
+      { type: "RightBracket" },
+      { type: "EOL" },
+    ];
+    deepStrictEqual(tokens, expectedTokens);
+  });
+
   it("should tokenize multi line expression", () => {
     const input = `
       (define (square x)

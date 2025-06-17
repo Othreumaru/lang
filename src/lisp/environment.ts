@@ -59,7 +59,14 @@ defaultEnv.set("=", (...nums: number[]) => nums.every((n) => n === nums[0]));
 defaultEnv.set(">", (...nums: number[]) =>
   nums.slice(1).every((n) => nums[0] > n)
 );
+defaultEnv.set(">=", (...nums: number[]) =>
+  nums.slice(1).every((n) => nums[0] >= n)
+);
 defaultEnv.set("<", (...nums: number[]) =>
   nums.slice(1).every((n) => nums[0] < n)
 );
+defaultEnv.set("<=", (...nums: number[]) =>
+  nums.slice(1).every((n) => nums[0] <= n)
+);
 defaultEnv.set("not", (value: boolean) => !value);
+defaultEnv.set("else", (value: any) => value);

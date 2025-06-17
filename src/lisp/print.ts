@@ -44,6 +44,14 @@ export const print = (ast: AST, indentCount = 0): string => {
         ? `\n${indent(indentCount + 2)}${print(ast.elseBranch)}`
         : "";
       return `(if ${print(ast.condition)} \n${indent(indentCount + 2)}${print(ast.thenBranch)}${elsePart}\n${indent(indentCount)})`;
+    case "AndExpression":
+      return `(and \n${ast.conditions
+        .map((condition) => `${indent(indentCount + 2)}${print(condition)}`)
+        .join("\n")}\n${indent(indentCount)})`;
+    case "OrExpression":
+      return `(or \n${ast.conditions
+        .map((condition) => `${indent(indentCount + 2)}${print(condition)}`)
+        .join("\n")}\n${indent(indentCount)})`;
     default:
       throw new Error(`Unknown AST node type: ${ast.type}`);
   }

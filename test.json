@@ -1,0 +1,221 @@
+{
+  "type": "DefineFunctionExpression",
+  "name": "f",
+  "params": [
+    "a",
+    "b",
+    "c"
+  ],
+  "body": {
+    "type": "CondExpression",
+    "clauses": [
+      {
+        "condition": {
+          "type": "AndExpression",
+          "conditions": [
+            {
+              "type": "CallExpression",
+              "callee": "<=",
+              "args": [
+                {
+                  "type": "SymbolExpression",
+                  "name": "a"
+                },
+                {
+                  "type": "SymbolExpression",
+                  "name": "b"
+                }
+              ]
+            },
+            {
+              "type": "CallExpression",
+              "callee": "<=",
+              "args": [
+                {
+                  "type": "SymbolExpression",
+                  "name": "a"
+                },
+                {
+                  "type": "SymbolExpression",
+                  "name": "c"
+                }
+              ]
+            }
+          ]
+        },
+        "thenBranch": {
+          "type": "CallExpression",
+          "callee": "+",
+          "args": [
+            {
+              "type": "CallExpression",
+              "callee": "*",
+              "args": [
+                {
+                  "type": "SymbolExpression",
+                  "name": "b"
+                },
+                {
+                  "type": "SymbolExpression",
+                  "name": "b"
+                }
+              ]
+            },
+            {
+              "type": "CallExpression",
+              "callee": "*",
+              "args": [
+                {
+                  "type": "SymbolExpression",
+                  "name": "c"
+                },
+                {
+                  "type": "SymbolExpression",
+                  "name": "c"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "condition": {
+          "type": "AndExpression",
+          "conditions": [
+            {
+              "type": "CallExpression",
+              "callee": "<=",
+              "args": [
+                {
+                  "type": "SymbolExpression",
+                  "name": "b"
+                },
+                {
+                  "type": "SymbolExpression",
+                  "name": "a"
+                }
+              ]
+            },
+            {
+              "type": "CallExpression",
+              "callee": "<=",
+              "args": [
+                {
+                  "type": "SymbolExpression",
+                  "name": "b"
+                },
+                {
+                  "type": "SymbolExpression",
+                  "name": "c"
+                }
+              ]
+            }
+          ]
+        },
+        "thenBranch": {
+          "type": "CallExpression",
+          "callee": "+",
+          "args": [
+            {
+              "type": "CallExpression",
+              "callee": "*",
+              "args": [
+                {
+                  "type": "SymbolExpression",
+                  "name": "a"
+                },
+                {
+                  "type": "SymbolExpression",
+                  "name": "a"
+                }
+              ]
+            },
+            {
+              "type": "CallExpression",
+              "callee": "*",
+              "args": [
+                {
+                  "type": "SymbolExpression",
+                  "name": "c"
+                },
+                {
+                  "type": "SymbolExpression",
+                  "name": "c"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "condition": {
+          "type": "AndExpression",
+          "conditions": [
+            {
+              "type": "CallExpression",
+              "callee": "<=",
+              "args": [
+                {
+                  "type": "SymbolExpression",
+                  "name": "c"
+                },
+                {
+                  "type": "SymbolExpression",
+                  "name": "a"
+                }
+              ]
+            },
+            {
+              "type": "CallExpression",
+              "callee": "<=",
+              "args": [
+                {
+                  "type": "SymbolExpression",
+                  "name": "c"
+                },
+                {
+                  "type": "SymbolExpression",
+                  "name": "b"
+                }
+              ]
+            }
+          ]
+        },
+        "thenBranch": {
+          "type": "CallExpression",
+          "callee": "+",
+          "args": [
+            {
+              "type": "CallExpression",
+              "callee": "*",
+              "args": [
+                {
+                  "type": "SymbolExpression",
+                  "name": "a"
+                },
+                {
+                  "type": "SymbolExpression",
+                  "name": "a"
+                }
+              ]
+            },
+            {
+              "type": "CallExpression",
+              "callee": "*",
+              "args": [
+                {
+                  "type": "SymbolExpression",
+                  "name": "b"
+                },
+                {
+                  "type": "SymbolExpression",
+                  "name": "b"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

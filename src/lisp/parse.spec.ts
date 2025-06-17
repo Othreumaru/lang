@@ -220,6 +220,48 @@ describe("parse", () => {
     deepStrictEqual(ast, expectedAst);
   });
 
+  it("should parse a cond expression with else", () => {
+    const tokens: Token[] = [
+      { type: "LeftBracket" },
+      { type: "Symbol", value: "cond" },
+      { type: "LeftBracket" },
+      { type: "Boolean", value: false },
+      { type: "Number", value: 1 },
+      { type: "RightBracket" },
+      { type: "LeftBracket" },
+      { type: "Boolean", value: false },
+      { type: "Number", value: 0 },
+      { type: "RightBracket" },
+      { type: "LeftBracket" }, // else clause
+      { type: "Symbol", value: "else" },
+      { type: "Number", value: -1 },
+      { type: "RightBracket" },
+      { type: "RightBracket" },
+      { type: "EOL" },
+    ];
+    const ast = parse(tokens);
+    const expectedAst: AST[] = [
+      {
+        type: "CondExpression",
+        clauses: [
+          {
+            condition: { type: "LiteralExpression", value: false },
+            thenBranch: { type: "LiteralExpression", value: 1 },
+          },
+          {
+            condition: { type: "LiteralExpression", value: false },
+            thenBranch: { type: "LiteralExpression", value: 0 },
+          },
+          {
+            condition: { type: "SymbolExpression", name: "else" },
+            thenBranch: { type: "LiteralExpression", value: -1 },
+          },
+        ],
+      },
+    ];
+    deepStrictEqual(ast, expectedAst);
+  });
+
   it("should parse an and expression", () => {
     const tokens: Token[] = [
       { type: "LeftBracket" },

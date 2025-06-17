@@ -59,18 +59,12 @@ describe("repl", () => {
 
   it("should evaluate a define function expression", () => {
     const repl = createRepl();
-    deepStrictEqual(
-      repl("(define (square x) (* x x))"),
-      "[function (square x) (* x x)]"
-    );
+    deepStrictEqual(repl("(define (square x) (* x x))"), undefined);
     deepStrictEqual(repl("(square 5)"), 25);
     deepStrictEqual(repl("(square 10)"), 100);
     deepStrictEqual(
       repl("(define (sum-of-squares x y) (+ (square x) (square y)))"),
-      `[function (sum-of-squares x y) (+ 
-  (square x)
-  (square y)
-)]`
+      undefined
     );
     deepStrictEqual(repl("(sum-of-squares 3 4)"), 25);
     deepStrictEqual(repl("(sum-of-squares 5 12)"), 169);
@@ -93,10 +87,7 @@ describe("repl", () => {
           x
           (- x)))
     `),
-      `[function (abs x) (if (> x 0) 
-  x
-  (- x)
-)]`
+      undefined
     );
     deepStrictEqual(repl("(abs -5)"), 5);
     deepStrictEqual(repl("(abs 5)"), 5);
@@ -111,13 +102,65 @@ describe("repl", () => {
           ((= x 0) 0)
           ((< x 0) (- x))))
     `),
-      `[function (abs x) (cond 
-  ((> x 0) x)
-  ((= x 0) 0)
-  ((< x 0) (- x))
-)]`
+      undefined
     );
     deepStrictEqual(repl("(abs -5)"), 5);
     deepStrictEqual(repl("(abs 5)"), 5);
+  });
+
+  it("should evaluate 1.1 excercise", () => {
+    const repl = createRepl();
+    deepStrictEqual(repl("10"), 10);
+    deepStrictEqual(repl("(+ 5 3 4)"), 12);
+    deepStrictEqual(repl("(- 9 1)"), 8);
+    deepStrictEqual(repl("(/ 6 2)"), 3);
+    deepStrictEqual(repl("(+ (* 2 4) (- 4 6))"), 6);
+    deepStrictEqual(repl("(define a 3)"), 3);
+    deepStrictEqual(repl("(define b (+ a 1))"), 4);
+    deepStrictEqual(repl("(+ a b (* a b))"), 19);
+    deepStrictEqual(repl("(= a b)"), false);
+    deepStrictEqual(repl("(if (and (> b a) (< b (* a b))) b a)"), 4);
+    deepStrictEqual(
+      repl(`(cond ((= a 4) 6)
+                  ((= b 4) (+ 6 7 a))
+                  (else 25)
+            )`),
+      16
+    );
+    deepStrictEqual(repl("(+ 2 (if (> b a) b a))"), 6);
+    deepStrictEqual(
+      repl(`(* (cond ((> a b) a)
+                     ((< a b) b)
+                     (else -1))
+               (+ a 1)
+            )`),
+      16
+    );
+  });
+
+  it("should evaluate 1.2 excercise", () => {
+    const repl = createRepl();
+    deepStrictEqual(
+      repl("(/ (+ 5 4 (- 2(- 3 (+ 6 (/ 4 5))))) (* 3 (- 6 2) (- 2 7)))"),
+      -0.24666666666666667
+    );
+  });
+
+  it("should evaluate 1.3 excercise", () => {
+    const repl = createRepl();
+    deepStrictEqual(
+      repl(`
+      (define (f a b c)
+              (cond ((and (<= a b) (<= a c)) (+ (* b b) (* c c)))
+                    ((and (<= b a) (<= b c)) (+ (* a a) (* c c)))
+                    ((and (<= c a) (<= c b)) (+ (* a a) (* b b)))
+              )
+      )
+    `),
+      undefined
+    );
+    deepStrictEqual(repl("(f 1 2 3)"), 13);
+    deepStrictEqual(repl("(f 3 2 1)"), 13);
+    deepStrictEqual(repl("(f 2 3 1)"), 13);
   });
 });

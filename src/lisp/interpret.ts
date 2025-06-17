@@ -15,7 +15,7 @@ export const interpret = (node: AST, env: IEnvironment = defaultEnv): any => {
       return interpret(node.body, localEnv);
     };
     env.set(node.name, func);
-    return `[function (${node.name} ${node.params.join(" ")}) ${print(node.body)}]`;
+    return undefined;
   }
   if (node.type === "LiteralExpression") {
     return node.value;
@@ -62,6 +62,25 @@ export const interpret = (node: AST, env: IEnvironment = defaultEnv): any => {
     }
     return null; // No conditions matched
   }
+  if (node.type === "AndExpression") {
+    for (const condition of node.conditions) {
+      const result = interpret(condition, env);
+      if (!result) {
+        return false; // Short-circuit
+      }
+    }
+    return true; // All conditions are true
+  }
+  if (node.type === "OrExpression") {
+    for (const condition of node.conditions) {
+      const result = interpret(condition, env);
+      if (result) {
+        return true; // Short-circuit
+      }
+    }
+    return false; // All conditions are false
+  }
+  throw new Error(`Unknown AST node type: ${(node as any).type}`);
 };
 
 export const interpretAll = (

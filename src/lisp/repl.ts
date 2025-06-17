@@ -5,7 +5,7 @@ import { parse } from "./parse.ts";
 import { scan } from "./scan.ts";
 
 export const createRepl = (env: IEnvironment = defaultEnv) => {
-  const globalEnv = new Environment([],[], env);
+  const globalEnv = new Environment([], [], env);
   return (input: string): any => {
     const tokens = scan(input);
     const ast = parse(tokens);
