@@ -2,6 +2,7 @@ import { describe, it } from "node:test";
 import { interpret } from "./interpret.ts";
 import { deepStrictEqual } from "node:assert/strict";
 import type { AST } from "../ast.ts";
+import { defaultEnv, Environment } from "./environment.ts";
 
 describe("interpret", () => {
   it("should interpret a simple number", () => {
@@ -159,5 +160,38 @@ describe("interpret", () => {
     };
     const result = interpret(ast);
     deepStrictEqual(result, -1);
+  });
+
+  it("should parse a call expression with expression calle", () => {
+    const ast: AST = {
+      type: "CallExpression",
+      callee: {
+        type: "IfExpression",
+        condition: {
+          type: "CallExpression",
+          callee: ">",
+          args: [
+            { type: "SymbolExpression", name: "b" },
+            { type: "LiteralExpression", value: 0 },
+          ],
+        },
+        thenBranch: {
+          type: "SymbolExpression",
+          name: "+",
+        },
+        elseBranch: {
+          type: "SymbolExpression",
+          name: "-",
+        },
+      },
+      args: [
+        { type: "SymbolExpression", name: "a" },
+        { type: "SymbolExpression", name: "b" },
+      ],
+    };
+
+    const env = new Environment(["a", "b"], [5, 10], defaultEnv);
+    const result = interpret(ast, env);
+    deepStrictEqual(result, 15); // Assuming b is 10, so it uses +
   });
 });

@@ -1,6 +1,6 @@
 export type CallExpression = {
   type: "CallExpression";
-  callee: string;
+  callee: string | AST; // can be a symbol or another expression
   args: AST[];
 };
 

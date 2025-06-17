@@ -163,4 +163,21 @@ describe("repl", () => {
     deepStrictEqual(repl("(f 3 2 1)"), 13);
     deepStrictEqual(repl("(f 2 3 1)"), 13);
   });
+
+  it("should evaluate 1.4 excercise", () => {
+    const repl = createRepl();
+    deepStrictEqual(
+      repl(`
+      (define (a-plus-abs-b a b)
+        ((if (> b 0)
+          +
+          -
+        ) a b)
+      )
+    `),
+      undefined
+    );
+    deepStrictEqual(repl("(a-plus-abs-b 5 3)"), 8);
+    deepStrictEqual(repl("(a-plus-abs-b 5 -3)"), 8);
+  });
 });

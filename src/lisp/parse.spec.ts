@@ -305,4 +305,54 @@ describe("parse", () => {
     ];
     deepStrictEqual(ast, expectedAst);
   });
+
+  it("should parse a call expression with expression calle", () => {
+    const tokens: Token[] = [
+      { type: "LeftBracket" },
+      { type: "LeftBracket" },
+      { type: "Symbol", value: "if" },
+      { type: "LeftBracket" },
+      { type: "Symbol", value: ">" },
+      { type: "Symbol", value: "b" },
+      { type: "Number", value: 0 },
+      { type: "RightBracket" },
+      { type: "Symbol", value: "+" },
+      { type: "Symbol", value: "-" },
+      { type: "RightBracket" },
+      { type: "Symbol", value: "a" },
+      { type: "Symbol", value: "b" },
+      { type: "RightBracket" },
+      { type: "EOL" },
+    ];
+    const ast = parse(tokens);
+    const expectedAst: AST[] = [
+      {
+        type: "CallExpression",
+        callee: {
+          type: "IfExpression",
+          condition: {
+            type: "CallExpression",
+            callee: ">",
+            args: [
+              { type: "SymbolExpression", name: "b" },
+              { type: "LiteralExpression", value: 0 },
+            ],
+          },
+          thenBranch: {
+            type: "SymbolExpression",
+            name: "+",
+          },
+          elseBranch: {
+            type: "SymbolExpression",
+            name: "-",
+          },
+        },
+        args: [
+          { type: "SymbolExpression", name: "a" },
+          { type: "SymbolExpression", name: "b" },
+        ],
+      },
+    ];
+    deepStrictEqual(ast, expectedAst);
+  });
 });

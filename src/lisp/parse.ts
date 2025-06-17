@@ -91,11 +91,19 @@ export const parse = (tokens: Token[]): AST[] => {
   };
 
   const consumeCallExpression = (): CallExpression => {
-    const calleeToken = consumeAnyToken();
-    if (calleeToken.type !== "Symbol") {
-      throw new Error("Expected a symbol for the function name");
+    const isExpression = peek().type === "LeftBracket";
+    let callee: string | AST;
+    if (isExpression) {
+      callee = consumeExpression();
+    } else {
+      const token = consumeAnyToken();
+      if (token.type !== "Symbol") {
+        throw new Error(
+          "Expected a symbol for the function name or expression"
+        );
+      }
+      callee = token.value;
     }
-    const callee = calleeToken.value;
     const args: AST[] = [];
     while (!isAtEnd() && !consumeToken("RightBracket")) {
       args.push(consumeExpression());

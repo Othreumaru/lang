@@ -22,8 +22,15 @@ export const interpret = (node: AST, env: IEnvironment = defaultEnv): any => {
   }
   if (node.type === "CallExpression") {
     const args = node.args.map((arg) => interpret(arg, env));
-    if (env.has(node.callee)) {
-      const func = env.get(node.callee);
+    const callee =
+      typeof node.callee === "string"
+        ? node.callee
+        : interpret(node.callee, env);
+    if (typeof callee === "function") {
+      return callee(...args);
+    }
+    if (env.has(callee)) {
+      const func = env.get(callee);
       return func(...args);
     } else {
       throw new Error(`Function ${node.callee} is not defined`);

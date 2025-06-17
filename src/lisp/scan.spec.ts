@@ -116,4 +116,32 @@ describe("scan", () => {
     ];
     deepStrictEqual(tokens, expectedTokens);
   });
+
+  it("should tokenize a call expression with expression calle", () => {
+    const input = `
+      ((if (> b 0)
+          +
+          -
+        ) a b)
+    `;
+    const tokens = scan(input);
+    const expectedTokens = [
+      { type: "LeftBracket" },
+      { type: "LeftBracket" },
+      { type: "Symbol", value: "if" },
+      { type: "LeftBracket" },
+      { type: "Symbol", value: ">" },
+      { type: "Symbol", value: "b" },
+      { type: "Number", value: 0 },
+      { type: "RightBracket" },
+      { type: "Symbol", value: "+" },
+      { type: "Symbol", value: "-" },
+      { type: "RightBracket" },
+      { type: "Symbol", value: "a" },
+      { type: "Symbol", value: "b" },
+      { type: "RightBracket" },
+      { type: "EOL" },
+    ];
+    deepStrictEqual(tokens, expectedTokens);
+  });
 });
