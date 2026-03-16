@@ -203,6 +203,33 @@ describe("print", () => {
     );
   });
 
+  it("should print a define function expression with params", () => {
+    const ast: AST = {
+      type: "DefineFunctionExpression",
+      name: "square",
+      params: ["x"],
+      body: {
+        type: "CallExpression",
+        callee: "*",
+        args: [
+          { type: "SymbolExpression", name: "x" },
+          { type: "SymbolExpression", name: "x" },
+        ],
+      },
+    };
+    deepStrictEqual(print(ast), "(define (square x)\n  (* x x)\n)");
+  });
+
+  it("should print a define function expression with no params", () => {
+    const ast: AST = {
+      type: "DefineFunctionExpression",
+      name: "answer",
+      params: [],
+      body: { type: "LiteralExpression", value: 42 },
+    };
+    deepStrictEqual(print(ast), "(define (answer)\n  42\n)");
+  });
+
   it("should print all expressions", () => {
     const asts: AST[] = [
       { type: "LiteralExpression", value: 1 },

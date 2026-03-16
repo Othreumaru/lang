@@ -2,12 +2,13 @@ import type { AST } from "../ast";
 
 const isAllArgsAtom = (args: AST[]): boolean => {
   return args.every(
-    (arg) => arg.type === "LiteralExpression" || arg.type === "SymbolExpression"
+    (arg) =>
+      arg.type === "LiteralExpression" || arg.type === "SymbolExpression",
   );
 };
 
 export const print = (ast: AST, indentCount = 0): string => {
-  const indent = (count) => " ".repeat(count);
+  const indent = (count: number) => " ".repeat(count);
   switch (ast.type) {
     case "CallExpression":
       if (ast.args.length === 0) {
@@ -25,6 +26,10 @@ export const print = (ast: AST, indentCount = 0): string => {
         return `(define ${ast.name} \n${indent(indentCount + 2)}${print(ast.expression, indentCount + 2)}\n${indent(indentCount)})`;
       }
       return `(define ${ast.name} ${print(ast.expression)})`;
+    case "DefineFunctionExpression": {
+      const paramList = ast.params.length ? ` ${ast.params.join(" ")}` : "";
+      return `(define (${ast.name}${paramList})\n${indent(indentCount + 2)}${print(ast.body, indentCount + 2)}\n${indent(indentCount)})`;
+    }
     case "SymbolExpression":
       return ast.name;
     case "LiteralExpression":
@@ -36,7 +41,7 @@ export const print = (ast: AST, indentCount = 0): string => {
       return `(cond \n${ast.clauses
         .map(
           (clause) =>
-            `${indent(indentCount + 2)}(${print(clause.condition)} ${print(clause.thenBranch)})`
+            `${indent(indentCount + 2)}(${print(clause.condition)} ${print(clause.thenBranch)})`,
         )
         .join("\n")}\n${indent(indentCount)})`;
     case "IfExpression":
