@@ -1,6 +1,7 @@
 import { describe, it } from "node:test";
 import { Environment, defaultEnv } from "./environment.ts";
 import { deepStrictEqual, throws } from "node:assert/strict";
+import { ok } from "node:assert";
 
 describe("Environment", () => {
   it("should create a new environment", () => {
@@ -19,6 +20,7 @@ describe("Environment", () => {
     try {
       env.get("foo");
     } catch (error) {
+      ok(error instanceof Error);
       deepStrictEqual(error.message, "Symbol foo is not defined");
     }
   });
