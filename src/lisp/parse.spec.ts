@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import { parse } from "./parse.ts";
-import { deepStrictEqual } from "node:assert/strict";
+import { deepStrictEqual, throws } from "node:assert/strict";
 import type { AST } from "../ast.ts";
 import type { Token } from "./token.ts";
 
@@ -354,5 +354,85 @@ describe("parse", () => {
       },
     ];
     deepStrictEqual(ast, expectedAst);
+  });
+
+  it("should throw on unexpected end of input", () => {
+    throws(() => parse([]), /Unexpected end of input/);
+  });
+
+  it("should parse an empty list as null", () => {
+    const tokens: Token[] = [
+      { type: "LeftBracket" },
+      { type: "RightBracket" },
+      { type: "EOL" },
+    ];
+    deepStrictEqual(parse(tokens), [
+      { type: "LiteralExpression", value: null },
+    ]);
+  });
+
+  it("should throw when define name is not a symbol", () => {
+    const tokens: Token[] = [
+      { type: "LeftBracket" },
+      { type: "Symbol", value: "define" },
+      { type: "Number", value: 42 },
+      { type: "Number", value: 1 },
+      { type: "RightBracket" },
+      { type: "EOL" },
+    ];
+    throws(() => parse(tokens), /Expected a symbol for the function name/);
+  });
+
+  it("should throw when call expression callee is not a symbol", () => {
+    const tokens: Token[] = [
+      { type: "LeftBracket" },
+      { type: "Number", value: 42 },
+      { type: "Number", value: 1 },
+      { type: "RightBracket" },
+      { type: "EOL" },
+    ];
+    throws(
+      () => parse(tokens),
+      /Expected a symbol for the function name or expression/,
+    );
+  });
+
+  it("should throw on unexpected token type in literal", () => {
+    const tokens: Token[] = [{ type: "RightBracket" }, { type: "EOL" }];
+    throws(() => parse(tokens), /Unexpected token type/);
+  });
+
+  it("should throw when cond clause is missing closing bracket", () => {
+    const tokens: Token[] = [
+      { type: "LeftBracket" },
+      { type: "Symbol", value: "cond" },
+      { type: "LeftBracket" },
+      { type: "Boolean", value: true },
+      { type: "Number", value: 1 },
+      { type: "Number", value: 2 },
+      { type: "RightBracket" },
+      { type: "EOL" },
+    ];
+    throws(() => parse(tokens), /Expected closing bracket for cond clause/);
+  });
+
+  it("should throw when consumeTokenOrThrow finds wrong token type", () => {
+    // (define (42 x) body) — LeftBracket seen so consumeDefineFunctionExpression
+    // is called, which calls consumeTokenOrThrow("Symbol") for name but finds Number
+    const tokens: Token[] = [
+      { type: "LeftBracket" },
+      { type: "Symbol", value: "define" },
+      { type: "LeftBracket" },
+      { type: "Number", value: 42 },
+      { type: "Symbol", value: "x" },
+      { type: "RightBracket" },
+      { type: "Number", value: 1 },
+      { type: "RightBracket" },
+      { type: "EOL" },
+    ];
+    throws(
+      () => parse(tokens),
+      /Expected token of type Symbol, but found none/,
+    );
   });
 });

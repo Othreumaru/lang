@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "test": "node --test \"**/*.spec.ts\" ",
+    "test:coverage": "node --test --experimental-test-coverage \"**/*.spec.ts\" ",
     "lisp-to-js-e2e": "node ./src/lisp-to-js/compile.ts ./e2e/data/sum.lsp ./e2e/data/sum.js"
   },
   "author": "",

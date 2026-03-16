@@ -63,7 +63,7 @@ export const scan = (input: string): Token[] => {
   };
 
   while (index < input.length) {
-    const char = peek();
+    const char = input[index];
     switch (char) {
       case "(":
         consume("(");
@@ -104,9 +104,6 @@ export const scan = (input: string): Token[] => {
         break;
       }
       default: {
-        if (char === undefined) {
-          throw new Error("Unexpected end of input");
-        }
         if (isDigit(char)) {
           consumeDigit();
         } else if (char === "-" && isDigit(peek(1)!)) {

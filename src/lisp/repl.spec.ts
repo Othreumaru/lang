@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import { createRepl } from "./repl.ts";
-import { deepStrictEqual } from "node:assert/strict";
+import { deepStrictEqual, ok } from "node:assert/strict";
 
 describe("repl", () => {
   it("should evaluate a simple number", () => {
@@ -203,11 +203,8 @@ describe("repl", () => {
     try {
       repl("(test 0 (p))");
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        deepStrictEqual(error.message, "Maximum call stack size exceeded");
-      } else {
-        throw error;
-      }
+      ok(error instanceof Error);
+      deepStrictEqual(error.message, "Maximum call stack size exceeded");
     }
   });
 

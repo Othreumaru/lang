@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import { scan } from "./scan.ts";
-import { deepStrictEqual } from "node:assert/strict";
+import { deepStrictEqual, throws } from "node:assert/strict";
 
 describe("scan", () => {
   it("should tokenize a simple number", () => {
@@ -115,6 +115,48 @@ describe("scan", () => {
       { type: "EOL" },
     ];
     deepStrictEqual(tokens, expectedTokens);
+  });
+
+  it("should tokenize false boolean", () => {
+    const input = "#f";
+    const tokens = scan(input);
+    deepStrictEqual(tokens, [
+      { type: "Boolean", value: false },
+      { type: "EOL" },
+    ]);
+  });
+
+  it("should tokenize a negative floating number", () => {
+    const input = "-3.14";
+    const tokens = scan(input);
+    deepStrictEqual(tokens, [
+      { type: "Number", value: -3.14 },
+      { type: "EOL" },
+    ]);
+  });
+
+  it("should tokenize tab and carriage return whitespace", () => {
+    const input = "1\t2\r3";
+    const tokens = scan(input);
+    deepStrictEqual(tokens, [
+      { type: "Number", value: 1 },
+      { type: "Number", value: 2 },
+      { type: "Number", value: 3 },
+      { type: "EOL" },
+    ]);
+  });
+
+  it("should tokenize uppercase identifiers", () => {
+    const input = "Foo";
+    const tokens = scan(input);
+    deepStrictEqual(tokens, [
+      { type: "Symbol", value: "Foo" },
+      { type: "EOL" },
+    ]);
+  });
+
+  it("should throw on unexpected character", () => {
+    throws(() => scan("@"), /Unexpected character: @/);
   });
 
   it("should tokenize a call expression with expression calle", () => {
