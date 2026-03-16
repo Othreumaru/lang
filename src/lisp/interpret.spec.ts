@@ -53,7 +53,7 @@ describe("interpret", () => {
     deepStrictEqual(result, false);
   });
 
-  it("should interpret a < call expression", () => {
+  it("should interpret a < call expression returning false when left > right (second case)", () => {
     const ast: AST = {
       type: "CallExpression",
       callee: "<",
