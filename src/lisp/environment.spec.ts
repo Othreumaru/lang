@@ -1,5 +1,5 @@
 import { describe, it } from "node:test";
-import { Environment, defaultEnv } from "./environment.ts";
+import { Environment, defaultEnv } from "../environment.ts";
 import { deepStrictEqual, throws } from "node:assert/strict";
 import { ok } from "node:assert";
 

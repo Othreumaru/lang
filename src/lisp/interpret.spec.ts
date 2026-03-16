@@ -1,8 +1,8 @@
 import { describe, it } from "node:test";
-import { interpret, interpretAll } from "./interpret.ts";
+import { interpret, interpretAll } from "../interpret.ts";
 import { deepStrictEqual, throws } from "node:assert/strict";
 import type { AST } from "../ast.ts";
-import { defaultEnv, Environment } from "./environment.ts";
+import { defaultEnv, Environment } from "../environment.ts";
 
 describe("interpret", () => {
   it("should interpret a simple number", () => {

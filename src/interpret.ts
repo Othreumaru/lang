@@ -1,6 +1,5 @@
-import type { AST } from "../ast.ts";
+import type { AST } from "./ast.ts";
 import type { IEnvironment } from "./environment.ts";
-import { print } from "./print.ts";
 import { defaultEnv, Environment } from "./environment.ts";
 
 export const interpret = (node: AST, env: IEnvironment = defaultEnv): any => {

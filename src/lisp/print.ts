@@ -70,8 +70,6 @@ export const print = (ast: AST, indentCount = 0): string => {
         .join(" ");
       return `(let (${bindingsList})\n${indent(indentCount + 2)}${print(ast.body, indentCount + 2)}\n${indent(indentCount)})`;
     }
-    default:
-      throw new Error(`Unknown AST node type: ${ast.type}`);
   }
 };
 

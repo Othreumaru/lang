@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import { print, printAll } from "./print.ts";
-import { deepStrictEqual, throws } from "node:assert/strict";
+import { deepStrictEqual } from "node:assert/strict";
 import type { AST } from "../ast.ts";
 
 describe("print", () => {
@@ -213,13 +213,6 @@ describe("print", () => {
       },
     };
     deepStrictEqual(print(ast), "(let ((x 1) (y 2))\n  (+ x y)\n)");
-  });
-
-  it("should throw on unknown AST node type", () => {
-    throws(
-      () => print({ type: "UnknownExpression" } as any),
-      /Unknown AST node type/,
-    );
   });
 
   it("should print a define function expression with params", () => {
