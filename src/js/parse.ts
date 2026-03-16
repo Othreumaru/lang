@@ -182,33 +182,6 @@ export const parse = (tokens: Token[]): AST[] => {
       } satisfies DefineExpression;
     }
 
-    // function f(params) { return expr; }
-    if (t.type === "Keyword" && t.value === "function") {
-      advance();
-      const name = consumeType("Identifier").value;
-      consumeType("LeftParen");
-      const params: string[] = [];
-      while (peek().type !== "RightParen") {
-        params.push(consumeType("Identifier").value);
-        tryConsume("Comma");
-      }
-      consumeType("RightParen");
-      consumeType("LeftBrace");
-      const ret = advance();
-      if (ret.type !== "Keyword" || ret.value !== "return") {
-        throw new Error("Expected 'return' in function body");
-      }
-      const body = parseExpr();
-      tryConsume("Semicolon");
-      consumeType("RightBrace");
-      return {
-        type: "DefineFunctionExpression",
-        name,
-        params,
-        body,
-      } satisfies DefineFunctionExpression;
-    }
-
     // Expression statement
     const expr = parseExpr();
     tryConsume("Semicolon");

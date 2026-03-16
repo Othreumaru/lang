@@ -187,37 +187,6 @@ describe("parse", () => {
     });
   });
 
-  describe("function declarations", () => {
-    it("should parse function f(a, b) { return (a + b); }", () => {
-      deepStrictEqual(parse(scan("function f(a, b) { return (a + b); }")), [
-        {
-          type: "DefineFunctionExpression",
-          name: "f",
-          params: ["a", "b"],
-          body: {
-            type: "CallExpression",
-            callee: "+",
-            args: [
-              { type: "SymbolExpression", name: "a" },
-              { type: "SymbolExpression", name: "b" },
-            ],
-          },
-        },
-      ] satisfies AST[]);
-    });
-
-    it("should parse a function with no params", () => {
-      deepStrictEqual(parse(scan("function answer() { return 42; }")), [
-        {
-          type: "DefineFunctionExpression",
-          name: "answer",
-          params: [],
-          body: { type: "LiteralExpression", value: 42 },
-        },
-      ] satisfies AST[]);
-    });
-  });
-
   describe("if expressions", () => {
     it("should parse if (x) { return a; } else { return b; }", () => {
       deepStrictEqual(parse(scan("if (x) { return a; } else { return b; }")), [
@@ -312,13 +281,6 @@ describe("parse", () => {
       throws(
         () => parse(scan("if (x) { return a; } else { 42; }")),
         /Expected 'return' in else body/,
-      );
-    });
-
-    it("should throw when function body lacks return", () => {
-      throws(
-        () => parse(scan("function f() { 42; }")),
-        /Expected 'return' in function body/,
       );
     });
   });

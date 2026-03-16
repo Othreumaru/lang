@@ -3,7 +3,6 @@ import type { Token } from "./token.ts";
 const KEYWORDS = new Set([
   "const",
   "let",
-  "function",
   "return",
   "if",
   "else",
@@ -187,13 +186,7 @@ export const scan = (input: string): Token[] => {
         } else {
           tokens.push({
             type: "Keyword",
-            value: word as
-              | "const"
-              | "let"
-              | "function"
-              | "return"
-              | "if"
-              | "else",
+            value: word as "const" | "let" | "return" | "if" | "else",
           });
         }
       } else {

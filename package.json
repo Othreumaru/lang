@@ -7,7 +7,9 @@
     "test": "node --test \"**/*.spec.ts\" ",
     "test:coverage": "node --test --experimental-test-coverage \"**/*.spec.ts\" ",
     "lisp-to-js-e2e": "node ./src/lisp-to-js/compile.ts ./e2e/data/sum.lsp ./e2e/data/sum.js",
-    "js-to-lisp-e2e": "node ./src/js-to-lisp/compile.ts ./e2e/data/sum.js ./e2e/data/sum.lsp"
+    "js-to-lisp-e2e": "node ./src/js-to-lisp/compile.ts ./e2e/data/sum.js ./e2e/data/sum.lsp",
+    "format:js": "node ./src/js/format.ts",
+    "format:lisp": "node ./src/lisp/format.ts"
   },
   "author": "",
   "license": "ISC",

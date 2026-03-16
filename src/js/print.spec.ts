@@ -1,5 +1,5 @@
 import { describe, it } from "node:test";
-import { print, printAll } from "./print.ts";
+import { print, printAll, printExpr } from "./print.ts";
 import { deepStrictEqual, throws } from "node:assert/strict";
 import type { AST } from "../ast.ts";
 
@@ -232,6 +232,90 @@ describe("print", () => {
         },
       };
       deepStrictEqual(print(ast), "const x = const y = 1;");
+    });
+  });
+
+  describe("DefineFunctionExpression", () => {
+    it("should print an arrow function via print", () => {
+      const ast: AST = {
+        type: "DefineFunctionExpression",
+        name: "square",
+        params: ["x"],
+        body: {
+          type: "CallExpression",
+          callee: "*",
+          args: [
+            { type: "SymbolExpression", name: "x" },
+            { type: "SymbolExpression", name: "x" },
+          ],
+        },
+      };
+      deepStrictEqual(print(ast), "const square = (x) => (x * x);");
+    });
+
+    it("should print an arrow function via printExpr", () => {
+      const ast: AST = {
+        type: "DefineFunctionExpression",
+        name: "double",
+        params: ["n"],
+        body: {
+          type: "CallExpression",
+          callee: "*",
+          args: [
+            { type: "LiteralExpression", value: 2 },
+            { type: "SymbolExpression", name: "n" },
+          ],
+        },
+      };
+      deepStrictEqual(printExpr(ast), "const double = (n) => (2 * n)");
+    });
+  });
+
+  describe("IfExpression", () => {
+    it("should print an if/else via print", () => {
+      const ast: AST = {
+        type: "IfExpression",
+        condition: { type: "SymbolExpression", name: "x" },
+        thenBranch: { type: "LiteralExpression", value: 1 },
+        elseBranch: { type: "LiteralExpression", value: 2 },
+      };
+      deepStrictEqual(print(ast), "if (x) { return 1; } else { return 2; }");
+    });
+
+    it("should print an if without else", () => {
+      const ast: AST = {
+        type: "IfExpression",
+        condition: { type: "SymbolExpression", name: "x" },
+        thenBranch: { type: "LiteralExpression", value: 1 },
+        elseBranch: null,
+      };
+      deepStrictEqual(print(ast), "if (x) { return 1; }");
+    });
+  });
+
+  describe("AndExpression", () => {
+    it("should print an and expression", () => {
+      const ast: AST = {
+        type: "AndExpression",
+        conditions: [
+          { type: "SymbolExpression", name: "a" },
+          { type: "SymbolExpression", name: "b" },
+        ],
+      };
+      deepStrictEqual(printExpr(ast), "a && b");
+    });
+  });
+
+  describe("OrExpression", () => {
+    it("should print an or expression", () => {
+      const ast: AST = {
+        type: "OrExpression",
+        conditions: [
+          { type: "SymbolExpression", name: "a" },
+          { type: "SymbolExpression", name: "b" },
+        ],
+      };
+      deepStrictEqual(printExpr(ast), "a || b");
     });
   });
 

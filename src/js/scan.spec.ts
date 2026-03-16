@@ -248,14 +248,6 @@ describe("scan", () => {
       ] satisfies Token[]);
     });
 
-    it("should scan function", () => {
-      const tokens = scan("function");
-      deepStrictEqual(tokens, [
-        { type: "Keyword", value: "function" },
-        { type: "EOL" },
-      ] satisfies Token[]);
-    });
-
     it("should scan return", () => {
       const tokens = scan("return");
       deepStrictEqual(tokens, [
