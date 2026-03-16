@@ -187,6 +187,32 @@ describe("parse", () => {
     });
   });
 
+  describe("and / or expressions", () => {
+    it("should parse (a && b) as AndExpression", () => {
+      deepStrictEqual(parse(scan("(a && b)")), [
+        {
+          type: "AndExpression",
+          conditions: [
+            { type: "SymbolExpression", name: "a" },
+            { type: "SymbolExpression", name: "b" },
+          ],
+        },
+      ] satisfies AST[]);
+    });
+
+    it("should parse (a || b) as OrExpression", () => {
+      deepStrictEqual(parse(scan("(a || b)")), [
+        {
+          type: "OrExpression",
+          conditions: [
+            { type: "SymbolExpression", name: "a" },
+            { type: "SymbolExpression", name: "b" },
+          ],
+        },
+      ] satisfies AST[]);
+    });
+  });
+
   describe("if expressions", () => {
     it("should parse if (x) { return a; } else { return b; }", () => {
       deepStrictEqual(parse(scan("if (x) { return a; } else { return b; }")), [

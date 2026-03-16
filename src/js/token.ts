@@ -32,7 +32,19 @@ export type AssignToken = {
 
 export type OperatorToken = {
   type: "Operator";
-  value: "+" | "-" | "*" | "/" | "===" | "!==" | ">" | ">=" | "<" | "<=";
+  value:
+    | "+"
+    | "-"
+    | "*"
+    | "/"
+    | "==="
+    | "!=="
+    | ">"
+    | ">="
+    | "<"
+    | "<="
+    | "&&"
+    | "||";
 };
 
 export type KeywordToken = {

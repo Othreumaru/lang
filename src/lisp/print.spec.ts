@@ -196,9 +196,28 @@ describe("print", () => {
     deepStrictEqual(print(ast), "(or \n  a\n  b\n)");
   });
 
+  it("should print a let expression", () => {
+    const ast: AST = {
+      type: "LetExpression",
+      bindings: [
+        { name: "x", expression: { type: "LiteralExpression", value: 1 } },
+        { name: "y", expression: { type: "LiteralExpression", value: 2 } },
+      ],
+      body: {
+        type: "CallExpression",
+        callee: "+",
+        args: [
+          { type: "SymbolExpression", name: "x" },
+          { type: "SymbolExpression", name: "y" },
+        ],
+      },
+    };
+    deepStrictEqual(print(ast), "(let ((x 1) (y 2))\n  (+ x y)\n)");
+  });
+
   it("should throw on unknown AST node type", () => {
     throws(
-      () => print({ type: "LetExpression" } as any),
+      () => print({ type: "UnknownExpression" } as any),
       /Unknown AST node type/,
     );
   });

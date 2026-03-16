@@ -45,6 +45,18 @@ export const printExpr = (ast: AST): string => {
         return `${ast.value}`;
       }
       return JSON.stringify(ast.value);
+    case "LetExpression": {
+      const params = ast.bindings.map((b) => b.name).join(", ");
+      const args = ast.bindings.map((b) => printExpr(b.expression)).join(", ");
+      return `((${params}) => ${printExpr(ast.body)})(${args})`;
+    }
+    case "CondExpression": {
+      let result = "null";
+      for (let i = ast.clauses.length - 1; i >= 0; i--) {
+        result = `${printExpr(ast.clauses[i].condition)} ? ${printExpr(ast.clauses[i].thenBranch)} : ${result}`;
+      }
+      return result;
+    }
     default:
       throw new Error(`Unknown AST node type: ${(ast as AST).type}`);
   }
@@ -79,6 +91,9 @@ export const print = (ast: AST): string => {
     }
     case "IfExpression":
       return printExpr(ast);
+    case "LetExpression":
+    case "CondExpression":
+      return `${printExpr(ast)};`;
     default:
       return printExpr(ast);
   }

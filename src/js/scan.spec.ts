@@ -315,6 +315,36 @@ describe("scan", () => {
     });
   });
 
+  describe("&&  and  ||  operators", () => {
+    it("should scan &&", () => {
+      const tokens = scan("a && b");
+      deepStrictEqual(tokens, [
+        { type: "Identifier", value: "a" },
+        { type: "Operator", value: "&&" },
+        { type: "Identifier", value: "b" },
+        { type: "EOL" },
+      ] satisfies Token[]);
+    });
+
+    it("should scan ||", () => {
+      const tokens = scan("a || b");
+      deepStrictEqual(tokens, [
+        { type: "Identifier", value: "a" },
+        { type: "Operator", value: "||" },
+        { type: "Identifier", value: "b" },
+        { type: "EOL" },
+      ] satisfies Token[]);
+    });
+
+    it("should throw on bare &", () => {
+      throws(() => scan("&"), /Unexpected character: &/);
+    });
+
+    it("should throw on bare |", () => {
+      throws(() => scan("|"), /Unexpected character: |/);
+    });
+  });
+
   describe("errors", () => {
     it("should throw on ==", () => {
       throws(() => scan("=="), /Expected '===' but got '=='/);

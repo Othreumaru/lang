@@ -131,6 +131,29 @@ export const scan = (input: string): Token[] => {
       continue;
     }
 
+    // && and ||
+    if (char === "&") {
+      index++;
+      if (peek() === "&") {
+        index++;
+        tokens.push({ type: "Operator", value: "&&" });
+      } else {
+        throw new Error(`Unexpected character: &`);
+      }
+      continue;
+    }
+
+    if (char === "|") {
+      index++;
+      if (peek() === "|") {
+        index++;
+        tokens.push({ type: "Operator", value: "||" });
+      } else {
+        throw new Error(`Unexpected character: |`);
+      }
+      continue;
+    }
+
     // Single-character tokens
     switch (char) {
       case "(":

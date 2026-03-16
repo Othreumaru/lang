@@ -73,6 +73,12 @@ export const parse = (tokens: Token[]): AST[] => {
         const op = (advance() as Extract<Token, { type: "Operator" }>).value;
         const right = parseExpr();
         consumeType("RightParen");
+        if (op === "&&") {
+          return { type: "AndExpression", conditions: [left, right] };
+        }
+        if (op === "||") {
+          return { type: "OrExpression", conditions: [left, right] };
+        }
         return { type: "CallExpression", callee: op, args: [left, right] };
       }
       consumeType("RightParen");

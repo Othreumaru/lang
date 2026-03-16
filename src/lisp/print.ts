@@ -64,6 +64,12 @@ export const print = (ast: AST, indentCount = 0): string => {
             `${indent(indentCount + 2)}${print(condition, indentCount + 2)}`,
         )
         .join("\n")}\n${indent(indentCount)})`;
+    case "LetExpression": {
+      const bindingsList = ast.bindings
+        .map((b) => `(${b.name} ${print(b.expression, indentCount + 4)})`)
+        .join(" ");
+      return `(let (${bindingsList})\n${indent(indentCount + 2)}${print(ast.body, indentCount + 2)}\n${indent(indentCount)})`;
+    }
     default:
       throw new Error(`Unknown AST node type: ${ast.type}`);
   }

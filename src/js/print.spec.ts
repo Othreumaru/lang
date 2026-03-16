@@ -195,19 +195,33 @@ describe("print", () => {
       deepStrictEqual(print(ast), "(getAdd() + 1)");
     });
 
-    it("should throw for an unknown nested AST node type", () => {
-      const ast = {
+    it("should print a LetExpression nested in call args", () => {
+      const ast: AST = {
         type: "CallExpression",
         callee: "foo",
         args: [
           {
             type: "LetExpression",
-            bindings: [],
-            body: { type: "LiteralExpression", value: 1 },
+            bindings: [
+              {
+                name: "x",
+                expression: { type: "LiteralExpression", value: 1 },
+              },
+            ],
+            body: { type: "SymbolExpression", name: "x" },
           },
         ],
+      };
+      deepStrictEqual(print(ast), "foo(((x) => x)(1));");
+    });
+
+    it("should throw for an unknown nested AST node type", () => {
+      const ast = {
+        type: "CallExpression",
+        callee: "foo",
+        args: [{ type: "UnknownExpression" }],
       } as unknown as AST;
-      throws(() => print(ast), /Unknown AST node type: LetExpression/);
+      throws(() => print(ast), /Unknown AST node type/);
     });
   });
 
@@ -301,79 +315,138 @@ describe("print", () => {
       );
     });
   });
-    it("should print an if/else via print", () => {
-      const ast: AST = {
-        type: "IfExpression",
-        condition: { type: "SymbolExpression", name: "x" },
-        thenBranch: { type: "LiteralExpression", value: 1 },
-        elseBranch: { type: "LiteralExpression", value: 2 },
-      };
-      deepStrictEqual(print(ast), "if (x) { return 1; } else { return 2; }");
-    });
-
-    it("should print an if without else", () => {
-      const ast: AST = {
-        type: "IfExpression",
-        condition: { type: "SymbolExpression", name: "x" },
-        thenBranch: { type: "LiteralExpression", value: 1 },
-        elseBranch: null,
-      };
-      deepStrictEqual(print(ast), "if (x) { return 1; }");
-    });
+  it("should print an if/else via print", () => {
+    const ast: AST = {
+      type: "IfExpression",
+      condition: { type: "SymbolExpression", name: "x" },
+      thenBranch: { type: "LiteralExpression", value: 1 },
+      elseBranch: { type: "LiteralExpression", value: 2 },
+    };
+    deepStrictEqual(print(ast), "if (x) { return 1; } else { return 2; }");
   });
 
-  describe("AndExpression", () => {
-    it("should print an and expression", () => {
-      const ast: AST = {
-        type: "AndExpression",
-        conditions: [
-          { type: "SymbolExpression", name: "a" },
-          { type: "SymbolExpression", name: "b" },
+  it("should print an if without else", () => {
+    const ast: AST = {
+      type: "IfExpression",
+      condition: { type: "SymbolExpression", name: "x" },
+      thenBranch: { type: "LiteralExpression", value: 1 },
+      elseBranch: null,
+    };
+    deepStrictEqual(print(ast), "if (x) { return 1; }");
+  });
+});
+
+describe("AndExpression", () => {
+  it("should print an and expression", () => {
+    const ast: AST = {
+      type: "AndExpression",
+      conditions: [
+        { type: "SymbolExpression", name: "a" },
+        { type: "SymbolExpression", name: "b" },
+      ],
+    };
+    deepStrictEqual(printExpr(ast), "a && b");
+  });
+});
+
+describe("OrExpression", () => {
+  it("should print an or expression", () => {
+    const ast: AST = {
+      type: "OrExpression",
+      conditions: [
+        { type: "SymbolExpression", name: "a" },
+        { type: "SymbolExpression", name: "b" },
+      ],
+    };
+    deepStrictEqual(printExpr(ast), "a || b");
+  });
+});
+
+describe("LetExpression", () => {
+  it("should print a let expression as an IIFE via printExpr", () => {
+    const ast: AST = {
+      type: "LetExpression",
+      bindings: [
+        { name: "x", expression: { type: "LiteralExpression", value: 1 } },
+        { name: "y", expression: { type: "LiteralExpression", value: 2 } },
+      ],
+      body: {
+        type: "CallExpression",
+        callee: "+",
+        args: [
+          { type: "SymbolExpression", name: "x" },
+          { type: "SymbolExpression", name: "y" },
         ],
-      };
-      deepStrictEqual(printExpr(ast), "a && b");
-    });
+      },
+    };
+    deepStrictEqual(printExpr(ast), "((x, y) => (x + y))(1, 2)");
   });
 
-  describe("OrExpression", () => {
-    it("should print an or expression", () => {
-      const ast: AST = {
-        type: "OrExpression",
-        conditions: [
-          { type: "SymbolExpression", name: "a" },
-          { type: "SymbolExpression", name: "b" },
-        ],
-      };
-      deepStrictEqual(printExpr(ast), "a || b");
-    });
+  it("should print a let expression with semicolon via print", () => {
+    const ast: AST = {
+      type: "LetExpression",
+      bindings: [
+        { name: "x", expression: { type: "LiteralExpression", value: 5 } },
+      ],
+      body: { type: "SymbolExpression", name: "x" },
+    };
+    deepStrictEqual(print(ast), "((x) => x)(5);");
   });
+});
 
-  describe("errors", () => {
-    it("should throw for an unknown top-level AST node type", () => {
-      const ast = {
-        type: "LetExpression",
-        bindings: [],
-        body: { type: "LiteralExpression", value: 1 },
-      } as unknown as AST;
-      throws(() => print(ast), /Unknown AST node type: LetExpression/);
-    });
-  });
-
-  describe("printAll", () => {
-    it("should print multiple AST nodes joined by newlines", () => {
-      const asts: AST[] = [
+describe("CondExpression", () => {
+  it("should print a cond expression as ternary chain via printExpr", () => {
+    const ast: AST = {
+      type: "CondExpression",
+      clauses: [
         {
-          type: "DefineExpression",
-          name: "x",
-          expression: { type: "LiteralExpression", value: 1 },
+          condition: { type: "SymbolExpression", name: "a" },
+          thenBranch: { type: "LiteralExpression", value: 1 },
         },
         {
-          type: "DefineExpression",
-          name: "y",
-          expression: { type: "LiteralExpression", value: 2 },
+          condition: { type: "SymbolExpression", name: "else" },
+          thenBranch: { type: "LiteralExpression", value: 2 },
         },
-      ];
-      deepStrictEqual(printAll(asts), "const x = 1;\n\nconst y = 2;\n");
-    });
+      ],
+    };
+    deepStrictEqual(printExpr(ast), "a ? 1 : else ? 2 : null");
   });
 
+  it("should print a cond expression with semicolon via print", () => {
+    const ast: AST = {
+      type: "CondExpression",
+      clauses: [
+        {
+          condition: { type: "SymbolExpression", name: "x" },
+          thenBranch: { type: "LiteralExpression", value: 42 },
+        },
+      ],
+    };
+    deepStrictEqual(print(ast), "x ? 42 : null;");
+  });
+});
+
+describe("errors", () => {
+  it("should throw for an unknown top-level AST node type", () => {
+    const ast = { type: "UnknownExpression" } as unknown as AST;
+    throws(() => print(ast), /Unknown AST node type/);
+  });
+});
+
+describe("printAll", () => {
+  it("should print multiple AST nodes joined by newlines", () => {
+    const asts: AST[] = [
+      {
+        type: "DefineExpression",
+        name: "x",
+        expression: { type: "LiteralExpression", value: 1 },
+      },
+      {
+        type: "DefineExpression",
+        name: "y",
+        expression: { type: "LiteralExpression", value: 2 },
+      },
+    ];
+    deepStrictEqual(printAll(asts), "const x = 1;\n\nconst y = 2;\n");
+  });
+});
