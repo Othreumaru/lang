@@ -428,12 +428,20 @@ describe("CondExpression", () => {
 
 describe("ImportExpression", () => {
   it("should print an import via printExpr", () => {
-    const ast: AST = { type: "ImportExpression", module: "math", names: ["floor", "sqrt"] };
+    const ast: AST = {
+      type: "ImportExpression",
+      module: "math",
+      names: ["floor", "sqrt"],
+    };
     deepStrictEqual(printExpr(ast), 'from "math" import { floor, sqrt }');
   });
 
   it("should print an import with semicolon via print", () => {
-    const ast: AST = { type: "ImportExpression", module: "console", names: ["log"] };
+    const ast: AST = {
+      type: "ImportExpression",
+      module: "console",
+      names: ["log"],
+    };
     deepStrictEqual(print(ast), 'from "console" import { log };');
   });
 });

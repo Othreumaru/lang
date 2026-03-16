@@ -61,7 +61,9 @@ describe("js repl", () => {
 
   it("should evaluate an arrow function with if body", () => {
     const repl = createRepl();
-    repl("const abs = (x) => if ((x < 0)) { return (0 - x); } else { return x; };");
+    repl(
+      "const abs = (x) => if ((x < 0)) { return (0 - x); } else { return x; };",
+    );
     deepStrictEqual(repl("abs(-5)"), 5);
     deepStrictEqual(repl("abs(5)"), 5);
   });
@@ -87,7 +89,9 @@ describe("js repl", () => {
 
   it("should support recursive functions", () => {
     const repl = createRepl();
-    repl("const factorial = (n) => if ((n < 1)) { return 1; } else { return (n * factorial((n - 1))); };");
+    repl(
+      "const factorial = (n) => if ((n < 1)) { return 1; } else { return (n * factorial((n - 1))); };",
+    );
     deepStrictEqual(repl("factorial(5)"), 120);
   });
 
@@ -100,11 +104,17 @@ describe("js repl", () => {
 
   it("should throw when importing an unknown module", () => {
     const repl = createRepl();
-    throws(() => repl('from "unknown" import { foo };'), /Module "unknown" not found/);
+    throws(
+      () => repl('from "unknown" import { foo };'),
+      /Module "unknown" not found/,
+    );
   });
 
   it("should throw when importing a name not in the module", () => {
     const repl = createRepl();
-    throws(() => repl('from "math" import { doesNotExist };'), /"doesNotExist" is not exported/);
+    throws(
+      () => repl('from "math" import { doesNotExist };'),
+      /"doesNotExist" is not exported/,
+    );
   });
 });

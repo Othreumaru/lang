@@ -7,14 +7,33 @@ import type { Token } from "./token.ts";
 describe("parse", () => {
   it("should parse a from/import expression", () => {
     deepStrictEqual(
-      parse([{ type: "LeftBracket" }, { type: "Symbol", value: "from" }, { type: "String", value: "math" }, { type: "Symbol", value: "import" }, { type: "Symbol", value: "floor" }, { type: "Symbol", value: "sqrt" }, { type: "RightBracket" }, { type: "EOL" }]),
-      [{ type: "ImportExpression", module: "math", names: ["floor", "sqrt"] }] satisfies AST[],
+      parse([
+        { type: "LeftBracket" },
+        { type: "Symbol", value: "from" },
+        { type: "String", value: "math" },
+        { type: "Symbol", value: "import" },
+        { type: "Symbol", value: "floor" },
+        { type: "Symbol", value: "sqrt" },
+        { type: "RightBracket" },
+        { type: "EOL" },
+      ]),
+      [
+        { type: "ImportExpression", module: "math", names: ["floor", "sqrt"] },
+      ] satisfies AST[],
     );
   });
 
   it("should throw when 'import' keyword is missing in from expression", () => {
     throws(
-      () => parse([{ type: "LeftBracket" }, { type: "Symbol", value: "from" }, { type: "String", value: "math" }, { type: "Symbol", value: "floor" }, { type: "RightBracket" }, { type: "EOL" }]),
+      () =>
+        parse([
+          { type: "LeftBracket" },
+          { type: "Symbol", value: "from" },
+          { type: "String", value: "math" },
+          { type: "Symbol", value: "floor" },
+          { type: "RightBracket" },
+          { type: "EOL" },
+        ]),
       /Expected 'import'/,
     );
   });

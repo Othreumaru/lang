@@ -251,11 +251,17 @@ describe("repl", () => {
 
   it("should throw when importing an unknown module", () => {
     const repl = createRepl();
-    throws(() => repl('(from "unknown" import foo)'), /Module "unknown" not found/);
+    throws(
+      () => repl('(from "unknown" import foo)'),
+      /Module "unknown" not found/,
+    );
   });
 
   it("should throw when importing a name not in the module", () => {
     const repl = createRepl();
-    throws(() => repl('(from "math" import doesNotExist)'), /"doesNotExist" is not exported/);
+    throws(
+      () => repl('(from "math" import doesNotExist)'),
+      /"doesNotExist" is not exported/,
+    );
   });
 });

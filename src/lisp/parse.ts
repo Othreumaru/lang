@@ -26,7 +26,7 @@ export const parse = (tokens: Token[]): AST[] => {
 
   const isTokenOfType = <T extends Token["type"]>(
     token: Token,
-    type: T
+    type: T,
   ): token is Extract<Token, { type: T }> => {
     return token.type === type;
   };
@@ -38,7 +38,7 @@ export const parse = (tokens: Token[]): AST[] => {
   };
 
   const consumeToken = <T extends Token["type"]>(
-    type: T
+    type: T,
   ): Extract<Token, { type: T }> | null => {
     const token = peek();
     if (isTokenOfType(token, type)) {
@@ -49,7 +49,7 @@ export const parse = (tokens: Token[]): AST[] => {
   };
 
   const consumeTokenOrThrow = <T extends Token["type"]>(
-    type: T
+    type: T,
   ): Extract<Token, { type: T }> => {
     const token = consumeToken(type);
     if (!token) {
@@ -100,7 +100,7 @@ export const parse = (tokens: Token[]): AST[] => {
       const token = consumeAnyToken();
       if (token.type !== "Symbol") {
         throw new Error(
-          "Expected a symbol for the function name or expression"
+          "Expected a symbol for the function name or expression",
         );
       }
       callee = token.value;
@@ -222,14 +222,21 @@ export const parse = (tokens: Token[]): AST[] => {
         consumeAnyToken(); // consume "from"
         const moduleToken = consumeTokenOrThrow("String");
         const importKeyword = consumeAnyToken();
-        if (importKeyword.type !== "Symbol" || importKeyword.value !== "import") {
+        if (
+          importKeyword.type !== "Symbol" ||
+          importKeyword.value !== "import"
+        ) {
           throw new Error("Expected 'import' after module name");
         }
         const names: string[] = [];
         while (!isAtEnd() && !consumeToken("RightBracket")) {
           names.push(consumeTokenOrThrow("Symbol").value);
         }
-        return { type: "ImportExpression", module: moduleToken.value, names } satisfies ImportExpression;
+        return {
+          type: "ImportExpression",
+          module: moduleToken.value,
+          names,
+        } satisfies ImportExpression;
       }
       return consumeCallExpression();
     }

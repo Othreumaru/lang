@@ -179,7 +179,11 @@ export const parse = (tokens: Token[]): AST[] => {
       }
       consumeType("RightBrace");
       tryConsume("Semicolon");
-      return { type: "ImportExpression", module, names } satisfies ImportExpression;
+      return {
+        type: "ImportExpression",
+        module,
+        names,
+      } satisfies ImportExpression;
     }
 
     // const x = expr;  or  const f = (params) => expr;

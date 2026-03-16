@@ -40,7 +40,7 @@ export const interpret = (node: AST, env: IEnvironment = defaultEnv): any => {
     const localEnv = new Environment(
       node.bindings.map((b) => b.name),
       node.bindings.map((b) => interpret(b.expression, env)),
-      env
+      env,
     );
     return interpret(node.body, localEnv);
   }
@@ -91,7 +91,8 @@ export const interpret = (node: AST, env: IEnvironment = defaultEnv): any => {
     const mod = stdlib[node.module];
     if (!mod) throw new Error(`Module "${node.module}" not found`);
     for (const name of node.names) {
-      if (!(name in mod)) throw new Error(`"${name}" is not exported from "${node.module}"`);
+      if (!(name in mod))
+        throw new Error(`"${name}" is not exported from "${node.module}"`);
       env.set(name, mod[name]);
     }
     return undefined;
@@ -101,7 +102,7 @@ export const interpret = (node: AST, env: IEnvironment = defaultEnv): any => {
 
 export const interpretAll = (
   ast: AST[],
-  env: IEnvironment = defaultEnv
+  env: IEnvironment = defaultEnv,
 ): any => {
   let result: any = null;
   for (const node of ast) {

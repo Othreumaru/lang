@@ -211,7 +211,14 @@ export const scan = (input: string): Token[] => {
         } else {
           tokens.push({
             type: "Keyword",
-            value: word as "const" | "let" | "return" | "if" | "else" | "from" | "import",
+            value: word as
+              | "const"
+              | "let"
+              | "return"
+              | "if"
+              | "else"
+              | "from"
+              | "import",
           });
         }
       } else {

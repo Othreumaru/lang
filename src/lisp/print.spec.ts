@@ -243,7 +243,11 @@ describe("print", () => {
   });
 
   it("should print an import expression", () => {
-    const ast: AST = { type: "ImportExpression", module: "math", names: ["floor", "sqrt"] };
+    const ast: AST = {
+      type: "ImportExpression",
+      module: "math",
+      names: ["floor", "sqrt"],
+    };
     deepStrictEqual(print(ast), '(from "math" import floor sqrt)');
   });
 

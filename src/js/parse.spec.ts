@@ -189,17 +189,15 @@ describe("parse", () => {
 
   describe("import statements", () => {
     it('should parse from "math" import { floor, sqrt }', () => {
-      deepStrictEqual(
-        parse(scan('from "math" import { floor, sqrt };')),
-        [{ type: "ImportExpression", module: "math", names: ["floor", "sqrt"] }] satisfies AST[],
-      );
+      deepStrictEqual(parse(scan('from "math" import { floor, sqrt };')), [
+        { type: "ImportExpression", module: "math", names: ["floor", "sqrt"] },
+      ] satisfies AST[]);
     });
 
     it("should parse a single import", () => {
-      deepStrictEqual(
-        parse(scan('from "console" import { log };')),
-        [{ type: "ImportExpression", module: "console", names: ["log"] }] satisfies AST[],
-      );
+      deepStrictEqual(parse(scan('from "console" import { log };')), [
+        { type: "ImportExpression", module: "console", names: ["log"] },
+      ] satisfies AST[]);
     });
 
     it("should throw when 'import' keyword is missing", () => {
