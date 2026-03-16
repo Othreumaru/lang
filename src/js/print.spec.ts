@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
-import { print } from "./print.ts";
-import { deepStrictEqual } from "node:assert/strict";
+import { print, printAll } from "./print.ts";
+import { deepStrictEqual, throws } from "node:assert/strict";
 import type { AST } from "../ast.ts";
 
 describe("print", () => {
@@ -153,6 +153,114 @@ describe("print", () => {
       };
       const printed = print(ast);
       deepStrictEqual(printed, "foo(1, 2)(3, 4);");
+    });
+
+    it("should print a call expression with a SymbolExpression arg", () => {
+      const ast: AST = {
+        type: "CallExpression",
+        callee: "+",
+        args: [
+          { type: "SymbolExpression", name: "x" },
+          { type: "LiteralExpression", value: 1 },
+        ],
+      };
+      deepStrictEqual(print(ast), "(x + 1)");
+    });
+
+    it("should print a call expression with boolean literal args", () => {
+      const ast: AST = {
+        type: "CallExpression",
+        callee: "foo",
+        args: [
+          { type: "LiteralExpression", value: true },
+          { type: "LiteralExpression", value: false },
+        ],
+      };
+      deepStrictEqual(print(ast), "foo(true, false);");
+    });
+
+    it("should print a call expression with an expression-callee arg", () => {
+      const ast: AST = {
+        type: "CallExpression",
+        callee: "+",
+        args: [
+          {
+            type: "CallExpression",
+            callee: { type: "SymbolExpression", name: "getAdd" },
+            args: [],
+          },
+          { type: "LiteralExpression", value: 1 },
+        ],
+      };
+      deepStrictEqual(print(ast), "(getAdd() + 1)");
+    });
+
+    it("should throw for an unknown nested AST node type", () => {
+      const ast = {
+        type: "CallExpression",
+        callee: "foo",
+        args: [
+          {
+            type: "LetExpression",
+            bindings: [],
+            body: { type: "LiteralExpression", value: 1 },
+          },
+        ],
+      } as unknown as AST;
+      throws(() => print(ast), /Unknown AST node type: LetExpression/);
+    });
+  });
+
+  describe("DefineExpression", () => {
+    it("should print a DefineExpression", () => {
+      const ast: AST = {
+        type: "DefineExpression",
+        name: "x",
+        expression: { type: "LiteralExpression", value: 42 },
+      };
+      deepStrictEqual(print(ast), "const x = 42;");
+    });
+
+    it("should print a DefineExpression with a nested DefineExpression", () => {
+      const ast: AST = {
+        type: "DefineExpression",
+        name: "x",
+        expression: {
+          type: "DefineExpression",
+          name: "y",
+          expression: { type: "LiteralExpression", value: 1 },
+        },
+      };
+      deepStrictEqual(print(ast), "const x = const y = 1;");
+    });
+  });
+
+  describe("errors", () => {
+    it("should throw for an unknown top-level AST node type", () => {
+      const ast = {
+        type: "LetExpression",
+        bindings: [],
+        body: { type: "LiteralExpression", value: 1 },
+      } as unknown as AST;
+      throws(() => print(ast), /Unknown AST node type: LetExpression/);
+    });
+  });
+
+  describe("printAll", () => {
+    it("should print multiple AST nodes joined by newlines", () => {
+      const asts: AST[] = [
+        {
+          type: "DefineExpression",
+          name: "x",
+          expression: { type: "LiteralExpression", value: 1 },
+        },
+        {
+          type: "DefineExpression",
+          name: "y",
+          expression: { type: "LiteralExpression", value: 2 },
+        },
+      ];
+      deepStrictEqual(printAll(asts), "const x = 1;\nconst y = 2;");
     });
   });
 });
