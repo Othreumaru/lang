@@ -6,8 +6,8 @@
       "type": "extensionHost",
       "request": "launch",
       "args": [
-        "--extensionDevelopmentPath=${workspaceFolder}/..",
-        "${workspaceFolder}/../e2e/data/greet.ks"
+        "--extensionDevelopmentPath=${workspaceFolder}",
+        "${workspaceFolder}/../../core/e2e/data/greet.ks"
       ]
     }
   ]

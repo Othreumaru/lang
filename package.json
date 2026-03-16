@@ -1,24 +1,17 @@
 {
-  "name": "lang",
+  "name": "@ks/root",
   "version": "1.0.0",
-  "main": "index.js",
+  "private": true,
   "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "test": "node --test \"**/*.spec.ts\" ",
-    "test:coverage": "node --test --experimental-test-coverage \"**/*.spec.ts\" ",
-    "lisp-to-js-e2e": "node ./src/lisp-to-js/compile.ts ./e2e/data/sum.lsp ./e2e/data/sum.ks",
-    "js-to-lisp-e2e": "node ./src/js-to-lisp/compile.ts ./e2e/data/sum.ks ./e2e/data/sum.lsp",
-    "format:ks": "node ./src/js/format.ts",
-    "format:lisp": "node ./src/lisp/format.ts",
-    "install-ext": "cd vscode-ks && npx --yes vsce package --no-dependencies && code --install-extension krzysztof-script-0.1.0.vsix"
+    "test": "npm --workspace packages/core test",
+    "test:coverage": "npm --workspace packages/core run test:coverage",
+    "install-ext": "npm --workspace packages/vscode-ks run install-ext"
   },
   "author": "",
   "license": "ISC",
-  "description": "",
-  "devDependencies": {
-    "prettier": "^3.5.3"
-  },
-  "dependencies": {
-    "@types/node": "^22.15.21"
-  }
+  "description": ""
 }
