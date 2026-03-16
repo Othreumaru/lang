@@ -32,7 +32,7 @@ describe("repl", () => {
       (+ (- 10 7)
          6))
     `),
-      57
+      57,
     );
   });
 
@@ -64,7 +64,7 @@ describe("repl", () => {
     deepStrictEqual(repl("(square 10)"), 100);
     deepStrictEqual(
       repl("(define (sum-of-squares x y) (+ (square x) (square y)))"),
-      undefined
+      undefined,
     );
     deepStrictEqual(repl("(sum-of-squares 3 4)"), 25);
     deepStrictEqual(repl("(sum-of-squares 5 12)"), 169);
@@ -87,7 +87,7 @@ describe("repl", () => {
           x
           (- x)))
     `),
-      undefined
+      undefined,
     );
     deepStrictEqual(repl("(abs -5)"), 5);
     deepStrictEqual(repl("(abs 5)"), 5);
@@ -102,7 +102,7 @@ describe("repl", () => {
           ((= x 0) 0)
           ((< x 0) (- x))))
     `),
-      undefined
+      undefined,
     );
     deepStrictEqual(repl("(abs -5)"), 5);
     deepStrictEqual(repl("(abs 5)"), 5);
@@ -125,7 +125,7 @@ describe("repl", () => {
                   ((= b 4) (+ 6 7 a))
                   (else 25)
             )`),
-      16
+      16,
     );
     deepStrictEqual(repl("(+ 2 (if (> b a) b a))"), 6);
     deepStrictEqual(
@@ -134,7 +134,7 @@ describe("repl", () => {
                      (else -1))
                (+ a 1)
             )`),
-      16
+      16,
     );
   });
 
@@ -142,7 +142,7 @@ describe("repl", () => {
     const repl = createRepl();
     deepStrictEqual(
       repl("(/ (+ 5 4 (- 2(- 3 (+ 6 (/ 4 5))))) (* 3 (- 6 2) (- 2 7)))"),
-      -0.24666666666666667
+      -0.24666666666666667,
     );
   });
 
@@ -157,7 +157,7 @@ describe("repl", () => {
               )
       )
     `),
-      undefined
+      undefined,
     );
     deepStrictEqual(repl("(f 1 2 3)"), 13);
     deepStrictEqual(repl("(f 3 2 1)"), 13);
@@ -175,9 +175,73 @@ describe("repl", () => {
         ) a b)
       )
     `),
-      undefined
+      undefined,
     );
     deepStrictEqual(repl("(a-plus-abs-b 5 3)"), 8);
     deepStrictEqual(repl("(a-plus-abs-b 5 -3)"), 8);
+  });
+
+  it("should evaluate 1.5 excercise", () => {
+    const repl = createRepl();
+    deepStrictEqual(
+      repl(`
+      (define (p) (p))
+    `),
+      undefined,
+    );
+    deepStrictEqual(
+      repl(`
+      (define (test x y)
+        (if (= x 0)
+          0
+          y
+        )
+      )
+    `),
+      undefined,
+    );
+    try {
+      repl("(test 0 (p))");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        deepStrictEqual(error.message, "Maximum call stack size exceeded");
+      } else {
+        throw error;
+      }
+    }
+  });
+
+  it("should evaluate sqrt", () => {
+    const repl = createRepl();
+    repl(`
+      (define (sqrt-iter guess x)
+        (if (good-enough? guess x)
+            guess
+            (sqrt-iter (improve guess x) x)))
+    `);
+    repl(`
+      (define (improve guess x)
+        (average guess (/ x guess)))
+    `);
+    repl(`
+      (define (average x y)
+        (/ (+ x y) 2))
+    `);
+    repl(`
+      (define (good-enough? guess x)
+        (< (abs (- (square guess) x)) 0.001))
+    `);
+    repl(`
+      (define (square x)
+        (* x x))
+    `);
+    repl(`
+      (define (sqrt x)
+        (sqrt-iter 1.0 x))
+    `);
+    deepStrictEqual(repl("(sqrt 9)"), 3.00009155413138);
+    deepStrictEqual(repl("(sqrt (+ 100 37))"), 11.704699917758145);
+    deepStrictEqual(repl("(sqrt (+ (sqrt 2) (sqrt 3)))"), 1.7739279023207892);
+    deepStrictEqual(repl("(square (sqrt 1000))"), 1000.000369924366);
   });
 });

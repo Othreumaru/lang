@@ -1,7 +1,5 @@
 {
   "recommendations": [
-    "GitHub.copilot-chat",
-    "GitHub.copilot",
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
     "connor4312.nodejs-testing"

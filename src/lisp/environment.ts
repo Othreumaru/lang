@@ -55,6 +55,7 @@ defaultEnv.set("-", (...nums: number[]) => {
 });
 defaultEnv.set("*", (...nums: number[]) => nums.reduce((a, b) => a * b, 1));
 defaultEnv.set("/", (...nums: number[]) => nums.reduce((a, b) => a / b));
+defaultEnv.set("abs", (num: number) => Math.abs(num));
 defaultEnv.set("=", (...nums: number[]) => nums.every((n) => n === nums[0]));
 defaultEnv.set(">", (...nums: number[]) =>
   nums.slice(1).every((n) => nums[0] > n)
