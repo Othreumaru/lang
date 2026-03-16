@@ -235,6 +235,6 @@ describe("print", () => {
       { type: "LiteralExpression", value: 1 },
       { type: "LiteralExpression", value: 2 },
     ];
-    deepStrictEqual(printAll(asts), "1\n2");
+    deepStrictEqual(printAll(asts), "1\n\n2\n");
   });
 });

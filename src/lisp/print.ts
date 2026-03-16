@@ -70,5 +70,5 @@ export const print = (ast: AST, indentCount = 0): string => {
 };
 
 export const printAll = (ast: AST[]): string => {
-  return ast.map((node) => print(node)).join("\n");
+  return ast.map((node) => print(node)).join("\n\n") + "\n";
 };

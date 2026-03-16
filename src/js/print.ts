@@ -1,4 +1,4 @@
-import type { AST } from "../ast";
+import type { AST, IfExpression } from "../ast";
 
 const INFIX_OPS = new Set([
   "+",
@@ -50,6 +50,17 @@ export const printExpr = (ast: AST): string => {
   }
 };
 
+const printIfMultiline = (
+  ast: IfExpression,
+  outerIndent = "  ",
+  innerIndent = "    ",
+): string => {
+  const elsePart = ast.elseBranch
+    ? ` else {\n${innerIndent}return ${printExpr(ast.elseBranch)};\n${outerIndent}}`
+    : "";
+  return `if (${printExpr(ast.condition)}) {\n${innerIndent}return ${printExpr(ast.thenBranch)};\n${outerIndent}}${elsePart}`;
+};
+
 export const print = (ast: AST): string => {
   switch (ast.type) {
     case "CallExpression":
@@ -59,8 +70,13 @@ export const print = (ast: AST): string => {
       return `${printExpr(ast)};`;
     case "DefineExpression":
       return `const ${ast.name} = ${printExpr(ast.expression)};`;
-    case "DefineFunctionExpression":
-      return `const ${ast.name} = (${ast.params.join(", ")}) => ${printExpr(ast.body)};`;
+    case "DefineFunctionExpression": {
+      const params = `(${ast.params.join(", ")})`;
+      if (ast.body.type === "IfExpression") {
+        return `const ${ast.name} = ${params} =>\n  ${printIfMultiline(ast.body, "  ", "    ")};`;
+      }
+      return `const ${ast.name} = ${params} => ${printExpr(ast.body)};`;
+    }
     case "IfExpression":
       return printExpr(ast);
     default:
@@ -69,5 +85,5 @@ export const print = (ast: AST): string => {
 };
 
 export const printAll = (ast: AST[]) => {
-  return ast.map((node) => print(node)).join("\n");
+  return ast.map((node) => print(node)).join("\n\n") + "\n";
 };

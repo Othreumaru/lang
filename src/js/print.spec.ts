@@ -269,9 +269,38 @@ describe("print", () => {
       };
       deepStrictEqual(printExpr(ast), "const double = (n) => (2 * n)");
     });
+    it("should print an arrow function with if body multi-line", () => {
+      const ast: AST = {
+        type: "DefineFunctionExpression",
+        name: "abs",
+        params: ["x"],
+        body: {
+          type: "IfExpression",
+          condition: {
+            type: "CallExpression",
+            callee: "<",
+            args: [
+              { type: "SymbolExpression", name: "x" },
+              { type: "LiteralExpression", value: 0 },
+            ],
+          },
+          thenBranch: {
+            type: "CallExpression",
+            callee: "-",
+            args: [
+              { type: "LiteralExpression", value: 0 },
+              { type: "SymbolExpression", name: "x" },
+            ],
+          },
+          elseBranch: { type: "SymbolExpression", name: "x" },
+        },
+      };
+      deepStrictEqual(
+        print(ast),
+        "const abs = (x) =>\n  if ((x < 0)) {\n    return (0 - x);\n  } else {\n    return x;\n  };",
+      );
+    });
   });
-
-  describe("IfExpression", () => {
     it("should print an if/else via print", () => {
       const ast: AST = {
         type: "IfExpression",
@@ -344,7 +373,7 @@ describe("print", () => {
           expression: { type: "LiteralExpression", value: 2 },
         },
       ];
-      deepStrictEqual(printAll(asts), "const x = 1;\nconst y = 2;");
+      deepStrictEqual(printAll(asts), "const x = 1;\n\nconst y = 2;\n");
     });
   });
-});
+
