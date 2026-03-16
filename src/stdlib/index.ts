@@ -1,0 +1,26 @@
+export const stdlib: Record<string, Record<string, unknown>> = {
+  math: {
+    floor: Math.floor,
+    ceil: Math.ceil,
+    round: Math.round,
+    sqrt: Math.sqrt,
+    pow: Math.pow,
+    min: (...args: number[]) => Math.min(...args),
+    max: (...args: number[]) => Math.max(...args),
+    abs: Math.abs,
+    PI: Math.PI,
+  },
+  console: {
+    log: (...args: unknown[]) => console.log(...args),
+  },
+  string: {
+    length: (s: string) => s.length,
+    slice: (s: string, start: number, end?: number) => s.slice(start, end),
+    toUpperCase: (s: string) => s.toUpperCase(),
+    toLowerCase: (s: string) => s.toLowerCase(),
+    includes: (s: string, sub: string) => s.includes(sub),
+    startsWith: (s: string, prefix: string) => s.startsWith(prefix),
+    endsWith: (s: string, suffix: string) => s.endsWith(suffix),
+    concat: (...parts: string[]) => parts.join(""),
+  },
+};

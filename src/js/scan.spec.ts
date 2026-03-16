@@ -402,5 +402,21 @@ describe("scan", () => {
         { type: "EOL" },
       ] satisfies Token[]);
     });
+
+    it("should scan a from/import statement", () => {
+      const tokens = scan('from "math" import { floor, sqrt };');
+      deepStrictEqual(tokens, [
+        { type: "Keyword", value: "from" },
+        { type: "String", value: "math" },
+        { type: "Keyword", value: "import" },
+        { type: "LeftBrace" },
+        { type: "Identifier", value: "floor" },
+        { type: "Comma" },
+        { type: "Identifier", value: "sqrt" },
+        { type: "RightBrace" },
+        { type: "Semicolon" },
+        { type: "EOL" },
+      ] satisfies Token[]);
+    });
   });
 });

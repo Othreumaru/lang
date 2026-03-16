@@ -242,6 +242,11 @@ describe("print", () => {
     deepStrictEqual(print(ast), "(define (answer)\n  42\n)");
   });
 
+  it("should print an import expression", () => {
+    const ast: AST = { type: "ImportExpression", module: "math", names: ["floor", "sqrt"] };
+    deepStrictEqual(print(ast), '(from "math" import floor sqrt)');
+  });
+
   it("should print all expressions", () => {
     const asts: AST[] = [
       { type: "LiteralExpression", value: 1 },

@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import { createRepl } from "./repl.ts";
-import { deepStrictEqual } from "node:assert/strict";
+import { deepStrictEqual, throws } from "node:assert/strict";
 
 describe("js repl", () => {
   it("should evaluate a number literal", () => {
@@ -89,5 +89,22 @@ describe("js repl", () => {
     const repl = createRepl();
     repl("const factorial = (n) => if ((n < 1)) { return 1; } else { return (n * factorial((n - 1))); };");
     deepStrictEqual(repl("factorial(5)"), 120);
+  });
+
+  it("should import and use stdlib functions", () => {
+    const repl = createRepl();
+    repl('from "math" import { floor, sqrt };');
+    deepStrictEqual(repl("floor(3.7)"), 3);
+    deepStrictEqual(repl("sqrt(9)"), 3);
+  });
+
+  it("should throw when importing an unknown module", () => {
+    const repl = createRepl();
+    throws(() => repl('from "unknown" import { foo };'), /Module "unknown" not found/);
+  });
+
+  it("should throw when importing a name not in the module", () => {
+    const repl = createRepl();
+    throws(() => repl('from "math" import { doesNotExist };'), /"doesNotExist" is not exported/);
   });
 });

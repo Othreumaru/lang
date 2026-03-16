@@ -1,6 +1,7 @@
 import type { AST } from "./ast.ts";
 import type { IEnvironment } from "./environment.ts";
 import { defaultEnv, Environment } from "./environment.ts";
+import { stdlib } from "./stdlib/index.ts";
 
 export const interpret = (node: AST, env: IEnvironment = defaultEnv): any => {
   if (node.type === "DefineExpression") {
@@ -85,6 +86,15 @@ export const interpret = (node: AST, env: IEnvironment = defaultEnv): any => {
       }
     }
     return false; // All conditions are false
+  }
+  if (node.type === "ImportExpression") {
+    const mod = stdlib[node.module];
+    if (!mod) throw new Error(`Module "${node.module}" not found`);
+    for (const name of node.names) {
+      if (!(name in mod)) throw new Error(`"${name}" is not exported from "${node.module}"`);
+      env.set(name, mod[name]);
+    }
+    return undefined;
   }
   throw new Error(`Unknown AST node type: ${(node as any).type}`);
 };

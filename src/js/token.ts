@@ -49,7 +49,7 @@ export type OperatorToken = {
 
 export type KeywordToken = {
   type: "Keyword";
-  value: "const" | "let" | "return" | "if" | "else" | "true" | "false";
+  value: "const" | "let" | "return" | "if" | "else" | "true" | "false" | "from" | "import";
 };
 
 export type IdentifierToken = {

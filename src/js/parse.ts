@@ -3,6 +3,7 @@ import type {
   DefineFunctionExpression,
   DefineExpression,
   IfExpression,
+  ImportExpression,
 } from "../ast.ts";
 import type { Token } from "./token.ts";
 
@@ -161,6 +162,25 @@ export const parse = (tokens: Token[]): AST[] => {
 
   const parseStatement = (): AST => {
     const t = peek();
+
+    // from "module" import name1, name2;
+    if (t.type === "Keyword" && t.value === "from") {
+      advance();
+      const module = consumeType("String").value;
+      const imp = advance();
+      if (imp.type !== "Keyword" || imp.value !== "import") {
+        throw new Error("Expected 'import' after module name");
+      }
+      const names: string[] = [];
+      consumeType("LeftBrace");
+      while (!isAtEnd() && peek().type !== "RightBrace") {
+        names.push(consumeType("Identifier").value);
+        tryConsume("Comma");
+      }
+      consumeType("RightBrace");
+      tryConsume("Semicolon");
+      return { type: "ImportExpression", module, names } satisfies ImportExpression;
+    }
 
     // const x = expr;  or  const f = (params) => expr;
     if (t.type === "Keyword" && t.value === "const") {

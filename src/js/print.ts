@@ -57,6 +57,8 @@ export const printExpr = (ast: AST): string => {
       }
       return result;
     }
+    case "ImportExpression":
+      return `from "${ast.module}" import { ${ast.names.join(", ")} }`;
     default:
       throw new Error(`Unknown AST node type: ${(ast as AST).type}`);
   }
@@ -93,6 +95,7 @@ export const print = (ast: AST): string => {
       return printExpr(ast);
     case "LetExpression":
     case "CondExpression":
+    case "ImportExpression":
       return `${printExpr(ast)};`;
     default:
       return printExpr(ast);

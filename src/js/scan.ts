@@ -8,6 +8,8 @@ const KEYWORDS = new Set([
   "else",
   "true",
   "false",
+  "from",
+  "import",
 ]);
 
 const isDigit = (char: string): boolean => char >= "0" && char <= "9";
@@ -209,7 +211,7 @@ export const scan = (input: string): Token[] => {
         } else {
           tokens.push({
             type: "Keyword",
-            value: word as "const" | "let" | "return" | "if" | "else",
+            value: word as "const" | "let" | "return" | "if" | "else" | "from" | "import",
           });
         }
       } else {

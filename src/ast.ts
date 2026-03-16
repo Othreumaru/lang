@@ -57,6 +57,12 @@ export type CondExpression = {
   clauses: { condition: AST; thenBranch: AST }[];
 };
 
+export type ImportExpression = {
+  type: "ImportExpression";
+  module: string;
+  names: string[];
+};
+
 export type AST =
   | DefineExpression
   | DefineFunctionExpression
@@ -66,4 +72,5 @@ export type AST =
   | CondExpression
   | AndExpression
   | OrExpression
+  | ImportExpression
   | AtomExpression;

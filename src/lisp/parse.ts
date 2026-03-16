@@ -6,6 +6,7 @@ import type {
   DefineExpression,
   DefineFunctionExpression,
   IfExpression,
+  ImportExpression,
 } from "../ast.ts";
 import type { Token } from "./token.ts";
 
@@ -216,6 +217,19 @@ export const parse = (tokens: Token[]): AST[] => {
       }
       if (token.type === "Symbol" && token.value === "let") {
         return consumeLetExpression();
+      }
+      if (token.type === "Symbol" && token.value === "from") {
+        consumeAnyToken(); // consume "from"
+        const moduleToken = consumeTokenOrThrow("String");
+        const importKeyword = consumeAnyToken();
+        if (importKeyword.type !== "Symbol" || importKeyword.value !== "import") {
+          throw new Error("Expected 'import' after module name");
+        }
+        const names: string[] = [];
+        while (!isAtEnd() && !consumeToken("RightBracket")) {
+          names.push(consumeTokenOrThrow("Symbol").value);
+        }
+        return { type: "ImportExpression", module: moduleToken.value, names } satisfies ImportExpression;
       }
       return consumeCallExpression();
     }
