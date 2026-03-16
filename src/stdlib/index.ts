@@ -9,6 +9,12 @@ export const stdlib: Record<string, Record<string, unknown>> = {
     max: (...args: number[]) => Math.max(...args),
     abs: Math.abs,
     PI: Math.PI,
+    hypot: Math.hypot,
+    log: Math.log,
+    log2: Math.log2,
+    log10: Math.log10,
+    sign: Math.sign,
+    trunc: Math.trunc,
   },
   console: {
     log: (...args: unknown[]) => console.log(...args),
@@ -22,5 +28,9 @@ export const stdlib: Record<string, Record<string, unknown>> = {
     startsWith: (s: string, prefix: string) => s.startsWith(prefix),
     endsWith: (s: string, suffix: string) => s.endsWith(suffix),
     concat: (...parts: string[]) => parts.join(""),
+    trim: (s: string) => s.trim(),
+    repeat: (s: string, n: number) => s.repeat(n),
+    indexOf: (s: string, sub: string) => s.indexOf(sub),
+    replace: (s: string, from: string, to: string) => s.replaceAll(from, to),
   },
 };
