@@ -41,21 +41,28 @@ export const print = (ast: AST, indentCount = 0): string => {
       return `(cond \n${ast.clauses
         .map(
           (clause) =>
-            `${indent(indentCount + 2)}(${print(clause.condition)} ${print(clause.thenBranch)})`,
+            `${indent(indentCount + 2)}(${print(clause.condition, indentCount + 2)} ${print(clause.thenBranch, indentCount + 2)})`,
         )
         .join("\n")}\n${indent(indentCount)})`;
-    case "IfExpression":
+    case "IfExpression": {
       const elsePart = ast.elseBranch
-        ? `\n${indent(indentCount + 2)}${print(ast.elseBranch)}`
+        ? `\n${indent(indentCount + 2)}${print(ast.elseBranch, indentCount + 2)}`
         : "";
-      return `(if ${print(ast.condition)} \n${indent(indentCount + 2)}${print(ast.thenBranch)}${elsePart}\n${indent(indentCount)})`;
+      return `(if ${print(ast.condition, indentCount)} \n${indent(indentCount + 2)}${print(ast.thenBranch, indentCount + 2)}${elsePart}\n${indent(indentCount)})`;
+    }
     case "AndExpression":
       return `(and \n${ast.conditions
-        .map((condition) => `${indent(indentCount + 2)}${print(condition)}`)
+        .map(
+          (condition) =>
+            `${indent(indentCount + 2)}${print(condition, indentCount + 2)}`,
+        )
         .join("\n")}\n${indent(indentCount)})`;
     case "OrExpression":
       return `(or \n${ast.conditions
-        .map((condition) => `${indent(indentCount + 2)}${print(condition)}`)
+        .map(
+          (condition) =>
+            `${indent(indentCount + 2)}${print(condition, indentCount + 2)}`,
+        )
         .join("\n")}\n${indent(indentCount)})`;
     default:
       throw new Error(`Unknown AST node type: ${ast.type}`);
@@ -63,5 +70,5 @@ export const print = (ast: AST, indentCount = 0): string => {
 };
 
 export const printAll = (ast: AST[]): string => {
-  return ast.map(print).join("\n");
+  return ast.map((node) => print(node)).join("\n");
 };
