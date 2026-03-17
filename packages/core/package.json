@@ -2,6 +2,9 @@
   "name": "@ks/core",
   "version": "1.0.0",
   "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
   "scripts": {
     "test": "node --test \"src/**/*.spec.ts\"",
     "test:coverage": "node --test --experimental-test-coverage \"src/**/*.spec.ts\"",
