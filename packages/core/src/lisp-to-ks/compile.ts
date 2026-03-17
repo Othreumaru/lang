@@ -1,6 +1,6 @@
 import { parse } from "../lisp/parse.ts";
 import { scan } from "../lisp/scan.ts";
-import { printAll } from "../js/print.ts";
+import { printAll } from "../ks/print.ts";
 
 import { readFile, writeFile } from "node:fs/promises";
 

@@ -1,5 +1,5 @@
-import { parse } from "../js/parse.ts";
-import { scan } from "../js/scan.ts";
+import { parse } from "../ks/parse.ts";
+import { scan } from "../ks/scan.ts";
 import { printAll } from "../lisp/print.ts";
 
 import { readFile, writeFile } from "node:fs/promises";
