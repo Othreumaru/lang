@@ -9,7 +9,7 @@
   "scripts": {
     "test": "npm --workspace packages/core test",
     "test:coverage": "npm --workspace packages/core run test:coverage",
-    "install-ext": "npm --workspace packages/vscode-ks run install-ext"
+    "install-ext": "npm --workspace packages/ks-lsp run install-ext"
   },
   "author": "",
   "license": "ISC",

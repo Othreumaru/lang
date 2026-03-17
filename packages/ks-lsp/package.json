@@ -1,19 +1,40 @@
 {
-  "name": "ks-lsp",
-  "displayName": "ks-lsp",
-  "description": "Language server for Krzysztof Script",
-  "version": "0.0.1",
+  "name": "krzysztof-script",
+  "displayName": "Krzysztof Script",
+  "description": "Syntax highlighting and diagnostics for Krzysztof Script (.ks)",
+  "version": "0.1.0",
   "engines": {
     "vscode": "^1.110.0"
   },
   "categories": [
-    "Other"
+    "Programming Languages"
   ],
   "activationEvents": [
     "onLanguage:ks"
   ],
   "main": "./dist/extension.js",
-  "contributes": {},
+  "contributes": {
+    "languages": [
+      {
+        "id": "ks",
+        "aliases": [
+          "Krzysztof Script",
+          "ks"
+        ],
+        "extensions": [
+          ".ks"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "ks",
+        "scopeName": "source.ks",
+        "path": "./syntaxes/ks.tmLanguage.json"
+      }
+    ]
+  },
   "scripts": {
     "vscode:prepublish": "npm run package",
     "compile": "npm run check-types && npm run lint && node esbuild.js",
@@ -21,6 +42,7 @@
     "watch:esbuild": "node esbuild.js --watch",
     "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
     "package": "npm run check-types && npm run lint && node esbuild.js --production",
+    "install-ext": "npm run package && npx --yes vsce package --no-dependencies && code --install-extension krzysztof-script-0.1.0.vsix",
     "compile-tests": "tsc -p . --outDir out",
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "npm run compile-tests && npm run compile && npm run lint",
