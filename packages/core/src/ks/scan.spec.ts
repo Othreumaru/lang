@@ -7,7 +7,7 @@ describe("scan", () => {
   describe("whitespace", () => {
     it("should skip spaces, tabs, and newlines", () => {
       const tokens = scan(" \t\n\r");
-      deepStrictEqual(tokens, [{ type: "EOL" }]);
+      deepStrictEqual(tokens, [{ type: "EOL", offset: 4 }]);
     });
   });
 
@@ -15,42 +15,42 @@ describe("scan", () => {
     it("should scan an integer", () => {
       const tokens = scan("42");
       deepStrictEqual(tokens, [
-        { type: "Number", value: 42 },
-        { type: "EOL" },
+        { type: "Number", value: 42, offset: 0 },
+        { type: "EOL", offset: 2 },
       ] satisfies Token[]);
     });
 
     it("should scan a float", () => {
       const tokens = scan("3.14");
       deepStrictEqual(tokens, [
-        { type: "Number", value: 3.14 },
-        { type: "EOL" },
+        { type: "Number", value: 3.14, offset: 0 },
+        { type: "EOL", offset: 4 },
       ] satisfies Token[]);
     });
 
     it("should scan a negative integer", () => {
       const tokens = scan("-7");
       deepStrictEqual(tokens, [
-        { type: "Number", value: -7 },
-        { type: "EOL" },
+        { type: "Number", value: -7, offset: 0 },
+        { type: "EOL", offset: 2 },
       ] satisfies Token[]);
     });
 
     it("should scan a negative float", () => {
       const tokens = scan("-1.5");
       deepStrictEqual(tokens, [
-        { type: "Number", value: -1.5 },
-        { type: "EOL" },
+        { type: "Number", value: -1.5, offset: 0 },
+        { type: "EOL", offset: 4 },
       ] satisfies Token[]);
     });
 
     it("should scan - as operator when not followed by a digit", () => {
       const tokens = scan("x - y");
       deepStrictEqual(tokens, [
-        { type: "Identifier", value: "x" },
-        { type: "Operator", value: "-" },
-        { type: "Identifier", value: "y" },
-        { type: "EOL" },
+        { type: "Identifier", value: "x", offset: 0 },
+        { type: "Operator", value: "-", offset: 2 },
+        { type: "Identifier", value: "y", offset: 4 },
+        { type: "EOL", offset: 5 },
       ] satisfies Token[]);
     });
   });
@@ -59,24 +59,24 @@ describe("scan", () => {
     it("should scan a double-quoted string", () => {
       const tokens = scan('"hello"');
       deepStrictEqual(tokens, [
-        { type: "String", value: "hello" },
-        { type: "EOL" },
+        { type: "String", value: "hello", offset: 0 },
+        { type: "EOL", offset: 7 },
       ] satisfies Token[]);
     });
 
     it("should scan a single-quoted string", () => {
       const tokens = scan("'world'");
       deepStrictEqual(tokens, [
-        { type: "String", value: "world" },
-        { type: "EOL" },
+        { type: "String", value: "world", offset: 0 },
+        { type: "EOL", offset: 7 },
       ] satisfies Token[]);
     });
 
     it("should scan an empty string", () => {
       const tokens = scan('""');
       deepStrictEqual(tokens, [
-        { type: "String", value: "" },
-        { type: "EOL" },
+        { type: "String", value: "", offset: 0 },
+        { type: "EOL", offset: 2 },
       ] satisfies Token[]);
     });
   });
@@ -85,80 +85,80 @@ describe("scan", () => {
     it("should scan +", () => {
       const tokens = scan("+");
       deepStrictEqual(tokens, [
-        { type: "Operator", value: "+" },
-        { type: "EOL" },
+        { type: "Operator", value: "+", offset: 0 },
+        { type: "EOL", offset: 1 },
       ] satisfies Token[]);
     });
 
     it("should scan -", () => {
       const tokens = scan("-");
       deepStrictEqual(tokens, [
-        { type: "Operator", value: "-" },
-        { type: "EOL" },
+        { type: "Operator", value: "-", offset: 0 },
+        { type: "EOL", offset: 1 },
       ] satisfies Token[]);
     });
 
     it("should scan *", () => {
       const tokens = scan("*");
       deepStrictEqual(tokens, [
-        { type: "Operator", value: "*" },
-        { type: "EOL" },
+        { type: "Operator", value: "*", offset: 0 },
+        { type: "EOL", offset: 1 },
       ] satisfies Token[]);
     });
 
     it("should scan /", () => {
       const tokens = scan("/");
       deepStrictEqual(tokens, [
-        { type: "Operator", value: "/" },
-        { type: "EOL" },
+        { type: "Operator", value: "/", offset: 0 },
+        { type: "EOL", offset: 1 },
       ] satisfies Token[]);
     });
 
     it("should scan ===", () => {
       const tokens = scan("===");
       deepStrictEqual(tokens, [
-        { type: "Operator", value: "===" },
-        { type: "EOL" },
+        { type: "Operator", value: "===", offset: 0 },
+        { type: "EOL", offset: 3 },
       ] satisfies Token[]);
     });
 
     it("should scan !==", () => {
       const tokens = scan("!==");
       deepStrictEqual(tokens, [
-        { type: "Operator", value: "!==" },
-        { type: "EOL" },
+        { type: "Operator", value: "!==", offset: 0 },
+        { type: "EOL", offset: 3 },
       ] satisfies Token[]);
     });
 
     it("should scan >", () => {
       const tokens = scan(">");
       deepStrictEqual(tokens, [
-        { type: "Operator", value: ">" },
-        { type: "EOL" },
+        { type: "Operator", value: ">", offset: 0 },
+        { type: "EOL", offset: 1 },
       ] satisfies Token[]);
     });
 
     it("should scan >=", () => {
       const tokens = scan(">=");
       deepStrictEqual(tokens, [
-        { type: "Operator", value: ">=" },
-        { type: "EOL" },
+        { type: "Operator", value: ">=", offset: 0 },
+        { type: "EOL", offset: 2 },
       ] satisfies Token[]);
     });
 
     it("should scan <", () => {
       const tokens = scan("<");
       deepStrictEqual(tokens, [
-        { type: "Operator", value: "<" },
-        { type: "EOL" },
+        { type: "Operator", value: "<", offset: 0 },
+        { type: "EOL", offset: 1 },
       ] satisfies Token[]);
     });
 
     it("should scan <=", () => {
       const tokens = scan("<=");
       deepStrictEqual(tokens, [
-        { type: "Operator", value: "<=" },
-        { type: "EOL" },
+        { type: "Operator", value: "<=", offset: 0 },
+        { type: "EOL", offset: 2 },
       ] satisfies Token[]);
     });
   });
@@ -167,16 +167,16 @@ describe("scan", () => {
     it("should scan =", () => {
       const tokens = scan("=");
       deepStrictEqual(tokens, [
-        { type: "Assign" },
-        { type: "EOL" },
+        { type: "Assign", offset: 0 },
+        { type: "EOL", offset: 1 },
       ] satisfies Token[]);
     });
 
     it("should scan =>", () => {
       const tokens = scan("=>");
       deepStrictEqual(tokens, [
-        { type: "Arrow" },
-        { type: "EOL" },
+        { type: "Arrow", offset: 0 },
+        { type: "EOL", offset: 2 },
       ] satisfies Token[]);
     });
   });
@@ -185,48 +185,48 @@ describe("scan", () => {
     it("should scan (", () => {
       const tokens = scan("(");
       deepStrictEqual(tokens, [
-        { type: "LeftParen" },
-        { type: "EOL" },
+        { type: "LeftParen", offset: 0 },
+        { type: "EOL", offset: 1 },
       ] satisfies Token[]);
     });
 
     it("should scan )", () => {
       const tokens = scan(")");
       deepStrictEqual(tokens, [
-        { type: "RightParen" },
-        { type: "EOL" },
+        { type: "RightParen", offset: 0 },
+        { type: "EOL", offset: 1 },
       ] satisfies Token[]);
     });
 
     it("should scan {", () => {
       const tokens = scan("{");
       deepStrictEqual(tokens, [
-        { type: "LeftBrace" },
-        { type: "EOL" },
+        { type: "LeftBrace", offset: 0 },
+        { type: "EOL", offset: 1 },
       ] satisfies Token[]);
     });
 
     it("should scan }", () => {
       const tokens = scan("}");
       deepStrictEqual(tokens, [
-        { type: "RightBrace" },
-        { type: "EOL" },
+        { type: "RightBrace", offset: 0 },
+        { type: "EOL", offset: 1 },
       ] satisfies Token[]);
     });
 
     it("should scan ;", () => {
       const tokens = scan(";");
       deepStrictEqual(tokens, [
-        { type: "Semicolon" },
-        { type: "EOL" },
+        { type: "Semicolon", offset: 0 },
+        { type: "EOL", offset: 1 },
       ] satisfies Token[]);
     });
 
     it("should scan ,", () => {
       const tokens = scan(",");
       deepStrictEqual(tokens, [
-        { type: "Comma" },
-        { type: "EOL" },
+        { type: "Comma", offset: 0 },
+        { type: "EOL", offset: 1 },
       ] satisfies Token[]);
     });
   });
@@ -235,56 +235,56 @@ describe("scan", () => {
     it("should scan const", () => {
       const tokens = scan("const");
       deepStrictEqual(tokens, [
-        { type: "Keyword", value: "const" },
-        { type: "EOL" },
+        { type: "Keyword", value: "const", offset: 0 },
+        { type: "EOL", offset: 5 },
       ] satisfies Token[]);
     });
 
     it("should scan let", () => {
       const tokens = scan("let");
       deepStrictEqual(tokens, [
-        { type: "Keyword", value: "let" },
-        { type: "EOL" },
+        { type: "Keyword", value: "let", offset: 0 },
+        { type: "EOL", offset: 3 },
       ] satisfies Token[]);
     });
 
     it("should scan return", () => {
       const tokens = scan("return");
       deepStrictEqual(tokens, [
-        { type: "Keyword", value: "return" },
-        { type: "EOL" },
+        { type: "Keyword", value: "return", offset: 0 },
+        { type: "EOL", offset: 6 },
       ] satisfies Token[]);
     });
 
     it("should scan if", () => {
       const tokens = scan("if");
       deepStrictEqual(tokens, [
-        { type: "Keyword", value: "if" },
-        { type: "EOL" },
+        { type: "Keyword", value: "if", offset: 0 },
+        { type: "EOL", offset: 2 },
       ] satisfies Token[]);
     });
 
     it("should scan else", () => {
       const tokens = scan("else");
       deepStrictEqual(tokens, [
-        { type: "Keyword", value: "else" },
-        { type: "EOL" },
+        { type: "Keyword", value: "else", offset: 0 },
+        { type: "EOL", offset: 4 },
       ] satisfies Token[]);
     });
 
     it("should scan true", () => {
       const tokens = scan("true");
       deepStrictEqual(tokens, [
-        { type: "Keyword", value: "true" },
-        { type: "EOL" },
+        { type: "Keyword", value: "true", offset: 0 },
+        { type: "EOL", offset: 4 },
       ] satisfies Token[]);
     });
 
     it("should scan false", () => {
       const tokens = scan("false");
       deepStrictEqual(tokens, [
-        { type: "Keyword", value: "false" },
-        { type: "EOL" },
+        { type: "Keyword", value: "false", offset: 0 },
+        { type: "EOL", offset: 5 },
       ] satisfies Token[]);
     });
   });
@@ -293,24 +293,24 @@ describe("scan", () => {
     it("should scan a simple identifier", () => {
       const tokens = scan("foo");
       deepStrictEqual(tokens, [
-        { type: "Identifier", value: "foo" },
-        { type: "EOL" },
+        { type: "Identifier", value: "foo", offset: 0 },
+        { type: "EOL", offset: 3 },
       ] satisfies Token[]);
     });
 
     it("should scan an identifier with digits", () => {
       const tokens = scan("foo123");
       deepStrictEqual(tokens, [
-        { type: "Identifier", value: "foo123" },
-        { type: "EOL" },
+        { type: "Identifier", value: "foo123", offset: 0 },
+        { type: "EOL", offset: 6 },
       ] satisfies Token[]);
     });
 
     it("should scan an identifier starting with underscore", () => {
       const tokens = scan("_bar");
       deepStrictEqual(tokens, [
-        { type: "Identifier", value: "_bar" },
-        { type: "EOL" },
+        { type: "Identifier", value: "_bar", offset: 0 },
+        { type: "EOL", offset: 4 },
       ] satisfies Token[]);
     });
   });
@@ -319,20 +319,20 @@ describe("scan", () => {
     it("should scan &&", () => {
       const tokens = scan("a && b");
       deepStrictEqual(tokens, [
-        { type: "Identifier", value: "a" },
-        { type: "Operator", value: "&&" },
-        { type: "Identifier", value: "b" },
-        { type: "EOL" },
+        { type: "Identifier", value: "a", offset: 0 },
+        { type: "Operator", value: "&&", offset: 2 },
+        { type: "Identifier", value: "b", offset: 5 },
+        { type: "EOL", offset: 6 },
       ] satisfies Token[]);
     });
 
     it("should scan ||", () => {
       const tokens = scan("a || b");
       deepStrictEqual(tokens, [
-        { type: "Identifier", value: "a" },
-        { type: "Operator", value: "||" },
-        { type: "Identifier", value: "b" },
-        { type: "EOL" },
+        { type: "Identifier", value: "a", offset: 0 },
+        { type: "Operator", value: "||", offset: 2 },
+        { type: "Identifier", value: "b", offset: 5 },
+        { type: "EOL", offset: 6 },
       ] satisfies Token[]);
     });
 
@@ -365,57 +365,65 @@ describe("scan", () => {
 
   describe("sequences", () => {
     it("should scan a const declaration", () => {
+      // "const x = 1;"
+      //  0123456789...
       const tokens = scan("const x = 1;");
       deepStrictEqual(tokens, [
-        { type: "Keyword", value: "const" },
-        { type: "Identifier", value: "x" },
-        { type: "Assign" },
-        { type: "Number", value: 1 },
-        { type: "Semicolon" },
-        { type: "EOL" },
+        { type: "Keyword", value: "const", offset: 0 },
+        { type: "Identifier", value: "x", offset: 6 },
+        { type: "Assign", offset: 8 },
+        { type: "Number", value: 1, offset: 10 },
+        { type: "Semicolon", offset: 11 },
+        { type: "EOL", offset: 12 },
       ] satisfies Token[]);
     });
 
     it("should scan an arrow function", () => {
+      // "(x) => x + 1"
+      //  0123456789012
       const tokens = scan("(x) => x + 1");
       deepStrictEqual(tokens, [
-        { type: "LeftParen" },
-        { type: "Identifier", value: "x" },
-        { type: "RightParen" },
-        { type: "Arrow" },
-        { type: "Identifier", value: "x" },
-        { type: "Operator", value: "+" },
-        { type: "Number", value: 1 },
-        { type: "EOL" },
+        { type: "LeftParen", offset: 0 },
+        { type: "Identifier", value: "x", offset: 1 },
+        { type: "RightParen", offset: 2 },
+        { type: "Arrow", offset: 4 },
+        { type: "Identifier", value: "x", offset: 7 },
+        { type: "Operator", value: "+", offset: 9 },
+        { type: "Number", value: 1, offset: 11 },
+        { type: "EOL", offset: 12 },
       ] satisfies Token[]);
     });
 
     it("should scan a function call", () => {
+      // "add(1, 2)"
+      //  012345678
       const tokens = scan("add(1, 2)");
       deepStrictEqual(tokens, [
-        { type: "Identifier", value: "add" },
-        { type: "LeftParen" },
-        { type: "Number", value: 1 },
-        { type: "Comma" },
-        { type: "Number", value: 2 },
-        { type: "RightParen" },
-        { type: "EOL" },
+        { type: "Identifier", value: "add", offset: 0 },
+        { type: "LeftParen", offset: 3 },
+        { type: "Number", value: 1, offset: 4 },
+        { type: "Comma", offset: 5 },
+        { type: "Number", value: 2, offset: 7 },
+        { type: "RightParen", offset: 8 },
+        { type: "EOL", offset: 9 },
       ] satisfies Token[]);
     });
 
     it("should scan a from/import statement", () => {
+      // 'from "math" import { floor, sqrt };'
+      //  0    5      12     19 21    27   33
       const tokens = scan('from "math" import { floor, sqrt };');
       deepStrictEqual(tokens, [
-        { type: "Keyword", value: "from" },
-        { type: "String", value: "math" },
-        { type: "Keyword", value: "import" },
-        { type: "LeftBrace" },
-        { type: "Identifier", value: "floor" },
-        { type: "Comma" },
-        { type: "Identifier", value: "sqrt" },
-        { type: "RightBrace" },
-        { type: "Semicolon" },
-        { type: "EOL" },
+        { type: "Keyword", value: "from", offset: 0 },
+        { type: "String", value: "math", offset: 5 },
+        { type: "Keyword", value: "import", offset: 12 },
+        { type: "LeftBrace", offset: 19 },
+        { type: "Identifier", value: "floor", offset: 21 },
+        { type: "Comma", offset: 26 },
+        { type: "Identifier", value: "sqrt", offset: 28 },
+        { type: "RightBrace", offset: 33 },
+        { type: "Semicolon", offset: 34 },
+        { type: "EOL", offset: 35 },
       ] satisfies Token[]);
     });
   });

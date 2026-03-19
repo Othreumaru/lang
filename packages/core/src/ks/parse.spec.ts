@@ -311,7 +311,10 @@ describe("parse", () => {
     });
 
     it("should throw when input ends unexpectedly", () => {
-      throws(() => parse([{ type: "LeftParen" }]), /Unexpected end of input/);
+      throws(
+        () => parse([{ type: "LeftParen", offset: 0 }]),
+        /Unexpected end of input/,
+      );
     });
 
     it("should throw when if body lacks return", () => {

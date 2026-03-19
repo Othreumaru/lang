@@ -1,4 +1,5 @@
 import type { Token } from "./token.ts";
+import { KSSyntaxError } from "./error.ts";
 
 const KEYWORDS = new Set([
   "const",
@@ -46,6 +47,8 @@ export const scan = (input: string): Token[] => {
       continue;
     }
 
+    const start = index;
+
     // Numbers
     if (isDigit(char) || (char === "-" && isDigit(peek(1) ?? ""))) {
       let numStr = "";
@@ -58,7 +61,7 @@ export const scan = (input: string): Token[] => {
         index++; // consume "."
         numStr += "." + consumeWhile(isDigit);
       }
-      tokens.push({ type: "Number", value: parseFloat(numStr) });
+      tokens.push({ type: "Number", value: parseFloat(numStr), offset: start });
       continue;
     }
 
@@ -68,7 +71,7 @@ export const scan = (input: string): Token[] => {
       index++;
       const str = consumeWhile((c) => c !== quote);
       index++; // consume closing quote
-      tokens.push({ type: "String", value: str });
+      tokens.push({ type: "String", value: str, offset: start });
       continue;
     }
 
@@ -79,15 +82,15 @@ export const scan = (input: string): Token[] => {
         index++;
         if (peek() === "=") {
           index++;
-          tokens.push({ type: "Operator", value: "===" });
+          tokens.push({ type: "Operator", value: "===", offset: start });
         } else {
-          throw new Error("Expected '===' but got '=='");
+          throw new KSSyntaxError("Expected '===' but got '=='", start);
         }
       } else if (peek() === ">") {
         index++;
-        tokens.push({ type: "Arrow" });
+        tokens.push({ type: "Arrow", offset: start });
       } else {
-        tokens.push({ type: "Assign" });
+        tokens.push({ type: "Assign", offset: start });
       }
       continue;
     }
@@ -99,12 +102,12 @@ export const scan = (input: string): Token[] => {
         index++;
         if (peek() === "=") {
           index++;
-          tokens.push({ type: "Operator", value: "!==" });
+          tokens.push({ type: "Operator", value: "!==", offset: start });
         } else {
-          throw new Error("Expected '!==' but got '!='");
+          throw new KSSyntaxError("Expected '!==' but got '!='", start);
         }
       } else {
-        throw new Error(`Unexpected character: !`);
+        throw new KSSyntaxError(`Unexpected character: !`, start);
       }
       continue;
     }
@@ -114,9 +117,9 @@ export const scan = (input: string): Token[] => {
       index++;
       if (peek() === "=") {
         index++;
-        tokens.push({ type: "Operator", value: ">=" });
+        tokens.push({ type: "Operator", value: ">=", offset: start });
       } else {
-        tokens.push({ type: "Operator", value: ">" });
+        tokens.push({ type: "Operator", value: ">", offset: start });
       }
       continue;
     }
@@ -126,9 +129,9 @@ export const scan = (input: string): Token[] => {
       index++;
       if (peek() === "=") {
         index++;
-        tokens.push({ type: "Operator", value: "<=" });
+        tokens.push({ type: "Operator", value: "<=", offset: start });
       } else {
-        tokens.push({ type: "Operator", value: "<" });
+        tokens.push({ type: "Operator", value: "<", offset: start });
       }
       continue;
     }
@@ -138,9 +141,9 @@ export const scan = (input: string): Token[] => {
       index++;
       if (peek() === "&") {
         index++;
-        tokens.push({ type: "Operator", value: "&&" });
+        tokens.push({ type: "Operator", value: "&&", offset: start });
       } else {
-        throw new Error(`Unexpected character: &`);
+        throw new KSSyntaxError(`Unexpected character: &`, start);
       }
       continue;
     }
@@ -149,9 +152,9 @@ export const scan = (input: string): Token[] => {
       index++;
       if (peek() === "|") {
         index++;
-        tokens.push({ type: "Operator", value: "||" });
+        tokens.push({ type: "Operator", value: "||", offset: start });
       } else {
-        throw new Error(`Unexpected character: |`);
+        throw new KSSyntaxError(`Unexpected character: |`, start);
       }
       continue;
     }
@@ -160,43 +163,43 @@ export const scan = (input: string): Token[] => {
     switch (char) {
       case "(":
         index++;
-        tokens.push({ type: "LeftParen" });
+        tokens.push({ type: "LeftParen", offset: start });
         continue;
       case ")":
         index++;
-        tokens.push({ type: "RightParen" });
+        tokens.push({ type: "RightParen", offset: start });
         continue;
       case "{":
         index++;
-        tokens.push({ type: "LeftBrace" });
+        tokens.push({ type: "LeftBrace", offset: start });
         continue;
       case "}":
         index++;
-        tokens.push({ type: "RightBrace" });
+        tokens.push({ type: "RightBrace", offset: start });
         continue;
       case ";":
         index++;
-        tokens.push({ type: "Semicolon" });
+        tokens.push({ type: "Semicolon", offset: start });
         continue;
       case ",":
         index++;
-        tokens.push({ type: "Comma" });
+        tokens.push({ type: "Comma", offset: start });
         continue;
       case "+":
         index++;
-        tokens.push({ type: "Operator", value: "+" });
+        tokens.push({ type: "Operator", value: "+", offset: start });
         continue;
       case "-":
         index++;
-        tokens.push({ type: "Operator", value: "-" });
+        tokens.push({ type: "Operator", value: "-", offset: start });
         continue;
       case "*":
         index++;
-        tokens.push({ type: "Operator", value: "*" });
+        tokens.push({ type: "Operator", value: "*", offset: start });
         continue;
       case "/":
         index++;
-        tokens.push({ type: "Operator", value: "/" });
+        tokens.push({ type: "Operator", value: "/", offset: start });
         continue;
     }
 
@@ -205,9 +208,9 @@ export const scan = (input: string): Token[] => {
       const word = consumeWhile(isAlphaNumeric);
       if (KEYWORDS.has(word)) {
         if (word === "true") {
-          tokens.push({ type: "Keyword", value: "true" });
+          tokens.push({ type: "Keyword", value: "true", offset: start });
         } else if (word === "false") {
-          tokens.push({ type: "Keyword", value: "false" });
+          tokens.push({ type: "Keyword", value: "false", offset: start });
         } else {
           tokens.push({
             type: "Keyword",
@@ -219,17 +222,18 @@ export const scan = (input: string): Token[] => {
               | "else"
               | "from"
               | "import",
+            offset: start,
           });
         }
       } else {
-        tokens.push({ type: "Identifier", value: word });
+        tokens.push({ type: "Identifier", value: word, offset: start });
       }
       continue;
     }
 
-    throw new Error(`Unexpected character: ${char}`);
+    throw new KSSyntaxError(`Unexpected character: ${char}`, start);
   }
 
-  tokens.push({ type: "EOL" });
+  tokens.push({ type: "EOL", offset: index });
   return tokens;
 };

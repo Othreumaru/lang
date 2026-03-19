@@ -6,6 +6,7 @@ import type {
   ImportExpression,
 } from "../ast.ts";
 import type { Token } from "./token.ts";
+import { KSSyntaxError } from "./error.ts";
 
 export const parse = (tokens: Token[]): AST[] => {
   let index = 0;
@@ -13,7 +14,10 @@ export const parse = (tokens: Token[]): AST[] => {
   const peek = (offset = 0): Token => {
     const i = index + offset;
     if (i < tokens.length) return tokens[i];
-    throw new Error("Unexpected end of input");
+    throw new KSSyntaxError(
+      "Unexpected end of input",
+      tokens[tokens.length - 1]?.offset ?? 0,
+    );
   };
 
   const isAtEnd = (): boolean => peek().type === "EOL";
@@ -25,7 +29,10 @@ export const parse = (tokens: Token[]): AST[] => {
   ): Extract<Token, { type: T }> => {
     const t = peek();
     if (t.type !== type) {
-      throw new Error(`Expected token ${type}, got ${t.type}`);
+      throw new KSSyntaxError(
+        `Expected token ${type}, got ${t.type}`,
+        t.offset,
+      );
     }
     return advance() as Extract<Token, { type: T }>;
   };
@@ -95,7 +102,7 @@ export const parse = (tokens: Token[]): AST[] => {
       consumeType("LeftBrace");
       const thenRet = advance();
       if (thenRet.type !== "Keyword" || thenRet.value !== "return") {
-        throw new Error("Expected 'return' in if body");
+        throw new KSSyntaxError("Expected 'return' in if body", thenRet.offset);
       }
       const thenBranch = parseExpr();
       tryConsume("Semicolon");
@@ -109,7 +116,10 @@ export const parse = (tokens: Token[]): AST[] => {
         consumeType("LeftBrace");
         const elseRet = advance();
         if (elseRet.type !== "Keyword" || elseRet.value !== "return") {
-          throw new Error("Expected 'return' in else body");
+          throw new KSSyntaxError(
+            "Expected 'return' in else body",
+            elseRet.offset,
+          );
         }
         elseBranch = parseExpr();
         tryConsume("Semicolon");
@@ -157,7 +167,7 @@ export const parse = (tokens: Token[]): AST[] => {
       return { type: "SymbolExpression", name: t.value };
     }
 
-    throw new Error(`Unexpected token: ${t.type}`);
+    throw new KSSyntaxError(`Unexpected token: ${t.type}`, t.offset);
   };
 
   const parseStatement = (): AST => {
@@ -169,7 +179,10 @@ export const parse = (tokens: Token[]): AST[] => {
       const module = consumeType("String").value;
       const imp = advance();
       if (imp.type !== "Keyword" || imp.value !== "import") {
-        throw new Error("Expected 'import' after module name");
+        throw new KSSyntaxError(
+          "Expected 'import' after module name",
+          imp.offset,
+        );
       }
       const names: string[] = [];
       consumeType("LeftBrace");

@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { scan, parse } from "@ks/core";
+import { scan, parse, KSSyntaxError } from "@ks/core";
 
 const diagnosticCollection = vscode.languages.createDiagnosticCollection("ks");
 
@@ -16,8 +16,13 @@ function validateDocument(document: vscode.TextDocument): void {
     parse(tokens);
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : String(e);
-    // Report at position 0,0 — we don't have location info in the scanner/parser yet
-    const range = new vscode.Range(0, 0, 0, 0);
+    let range: vscode.Range;
+    if (e instanceof KSSyntaxError) {
+      const pos = document.positionAt(e.offset);
+      range = new vscode.Range(pos, pos.translate(0, 1));
+    } else {
+      range = new vscode.Range(0, 0, 0, 1);
+    }
     diagnostics.push(
       new vscode.Diagnostic(range, message, vscode.DiagnosticSeverity.Error),
     );
