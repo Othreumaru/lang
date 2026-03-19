@@ -213,4 +213,29 @@ describe("js repl", () => {
     const repl = createRepl();
     throws(() => repl('from "nope" import Nope;'), /not found/);
   });
+
+  it("should create and access array elements by index", () => {
+    const repl = createRepl();
+    repl("const arr = [10, 20, 30];");
+    deepStrictEqual(repl("arr[0]"), 10);
+    deepStrictEqual(repl("arr[2]"), 30);
+  });
+
+  it("should support nested arrays with chained index access", () => {
+    const repl = createRepl();
+    repl("const matrix = [[1, 2], [3, 4]];");
+    deepStrictEqual(repl("matrix[1][0]"), 3);
+  });
+
+  it("should throw on out-of-bounds index", () => {
+    const repl = createRepl();
+    repl("const xs = [1, 2];");
+    throws(() => repl("xs[5]"), /out of bounds/);
+  });
+
+  it("should throw on index access of a non-array", () => {
+    const repl = createRepl();
+    repl("const x = 42;");
+    throws(() => repl("x[0]"), /non-array/);
+  });
 });

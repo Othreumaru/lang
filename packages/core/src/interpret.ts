@@ -107,6 +107,20 @@ export const interpret = (node: AST, env: IEnvironment = defaultEnv): any => {
     env.set(node.alias, Object.freeze(obj));
     return undefined;
   }
+  if (node.type === "ArrayExpression") {
+    return Object.freeze(node.elements.map((el) => interpret(el, env)));
+  }
+  if (node.type === "IndexExpression") {
+    const obj = interpret(node.object, env);
+    const idx = interpret(node.index, env);
+    if (!Array.isArray(obj)) {
+      throw new Error("Index access on a non-array value");
+    }
+    if (typeof idx !== "number" || idx < 0 || idx >= obj.length) {
+      throw new Error(`Index ${idx} is out of bounds`);
+    }
+    return (obj as unknown[])[idx as number];
+  }
   if (node.type === "ObjectExpression") {
     const obj = Object.create(null) as Record<string, unknown>;
     for (const { key, value } of node.properties) {

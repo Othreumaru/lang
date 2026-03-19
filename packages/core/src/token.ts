@@ -99,6 +99,16 @@ export type ColonToken = {
   offset: number;
 };
 
+export type LeftBracketToken = {
+  type: "LeftBracket";
+  offset: number;
+};
+
+export type RightBracketToken = {
+  type: "RightBracket";
+  offset: number;
+};
+
 export type EOLToken = {
   type: "EOL";
   offset: number;
@@ -109,6 +119,8 @@ export type Token =
   | RightParenToken
   | LeftBraceToken
   | RightBraceToken
+  | LeftBracketToken
+  | RightBracketToken
   | SemicolonToken
   | CommaToken
   | DotToken

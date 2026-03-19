@@ -80,6 +80,17 @@ export type MemberExpression = {
   property: string;
 };
 
+export type ArrayExpression = {
+  type: "ArrayExpression";
+  elements: AST[];
+};
+
+export type IndexExpression = {
+  type: "IndexExpression";
+  object: AST;
+  index: AST;
+};
+
 export type AST =
   | DefineExpression
   | DefineFunctionExpression
@@ -93,4 +104,6 @@ export type AST =
   | NamespaceImportExpression
   | ObjectExpression
   | MemberExpression
+  | ArrayExpression
+  | IndexExpression
   | AtomExpression;

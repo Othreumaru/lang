@@ -73,17 +73,24 @@ export const parse = (tokens: Token[]): AST[] => {
     return params;
   };
 
-  // Consume any trailing .prop chains, building nested MemberExpressions.
+  // Consume any trailing .prop and [index] chains.
   const applyMemberAccess = (node: AST): AST => {
     let result = node;
-    while (peek().type === "Dot") {
-      advance(); // consume .
-      const prop = consumeType("Identifier");
-      result = {
-        type: "MemberExpression",
-        object: result,
-        property: prop.value,
-      };
+    while (peek().type === "Dot" || peek().type === "LeftBracket") {
+      if (peek().type === "Dot") {
+        advance(); // consume .
+        const prop = consumeType("Identifier");
+        result = {
+          type: "MemberExpression",
+          object: result,
+          property: prop.value,
+        };
+      } else {
+        advance(); // consume [
+        const index = parseExpr();
+        consumeType("RightBracket");
+        result = { type: "IndexExpression", object: result, index };
+      }
     }
     return result;
   };
@@ -157,6 +164,18 @@ export const parse = (tokens: Token[]): AST[] => {
       return { type: "LiteralExpression", value: t.value === "true" };
     }
 
+    // Array literal  [expr, ...]
+    if (t.type === "LeftBracket") {
+      advance();
+      const elements: AST[] = [];
+      while (peek().type !== "RightBracket") {
+        elements.push(parseExpr());
+        tryConsume("Comma");
+      }
+      consumeType("RightBracket");
+      return applyMemberAccess({ type: "ArrayExpression", elements });
+    }
+
     // Object literal  { key: expr, ... }
     if (t.type === "LeftBrace") {
       advance();
@@ -191,7 +210,9 @@ export const parse = (tokens: Token[]): AST[] => {
         type: "SymbolExpression",
         name: t.value,
       });
-      const hasDotChain = afterMember.type === "MemberExpression";
+      const hasDotChain =
+        afterMember.type === "MemberExpression" ||
+        afterMember.type === "IndexExpression";
       if (peek().type === "LeftParen") {
         advance(); // consume (
         const args: AST[] = [];

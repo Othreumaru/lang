@@ -181,4 +181,65 @@ describe("interpret", () => {
       throws(() => interpret(ast), /is not a property/);
     });
   });
+
+  describe("ArrayExpression", () => {
+    it("should create a frozen array with evaluated elements", () => {
+      const ast: AST = {
+        type: "ArrayExpression",
+        elements: [
+          { type: "LiteralExpression", value: 1 },
+          { type: "LiteralExpression", value: 2 },
+          { type: "LiteralExpression", value: 3 },
+        ],
+      };
+      const result = interpret(ast);
+      deepStrictEqual(result, [1, 2, 3]);
+      deepStrictEqual(Object.isFrozen(result), true);
+    });
+
+    it("should create an empty frozen array", () => {
+      const ast: AST = { type: "ArrayExpression", elements: [] };
+      const result = interpret(ast);
+      deepStrictEqual(result, []);
+      deepStrictEqual(Object.isFrozen(result), true);
+    });
+  });
+
+  describe("IndexExpression", () => {
+    it("should access an element by index", () => {
+      const ast: AST = {
+        type: "IndexExpression",
+        object: {
+          type: "ArrayExpression",
+          elements: [
+            { type: "LiteralExpression", value: 10 },
+            { type: "LiteralExpression", value: 20 },
+          ],
+        },
+        index: { type: "LiteralExpression", value: 1 },
+      };
+      deepStrictEqual(interpret(ast), 20);
+    });
+
+    it("should throw when indexing a non-array", () => {
+      const ast: AST = {
+        type: "IndexExpression",
+        object: { type: "LiteralExpression", value: 42 },
+        index: { type: "LiteralExpression", value: 0 },
+      };
+      throws(() => interpret(ast), /non-array/);
+    });
+
+    it("should throw when index is out of bounds", () => {
+      const ast: AST = {
+        type: "IndexExpression",
+        object: {
+          type: "ArrayExpression",
+          elements: [{ type: "LiteralExpression", value: 1 }],
+        },
+        index: { type: "LiteralExpression", value: 5 },
+      };
+      throws(() => interpret(ast), /out of bounds/);
+    });
+  });
 });

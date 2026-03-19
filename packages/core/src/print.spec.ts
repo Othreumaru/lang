@@ -534,6 +534,49 @@ describe("MemberExpression", () => {
   });
 });
 
+describe("ArrayExpression", () => {
+  it("should print an empty array", () => {
+    const ast: AST = { type: "ArrayExpression", elements: [] };
+    deepStrictEqual(printExpr(ast), "[]");
+  });
+
+  it("should print an array with elements", () => {
+    const ast: AST = {
+      type: "ArrayExpression",
+      elements: [
+        { type: "LiteralExpression", value: 1 },
+        { type: "LiteralExpression", value: 2 },
+        { type: "LiteralExpression", value: 3 },
+      ],
+    };
+    deepStrictEqual(printExpr(ast), "[1, 2, 3]");
+  });
+});
+
+describe("IndexExpression", () => {
+  it("should print an index access", () => {
+    const ast: AST = {
+      type: "IndexExpression",
+      object: { type: "SymbolExpression", name: "arr" },
+      index: { type: "LiteralExpression", value: 0 },
+    };
+    deepStrictEqual(printExpr(ast), "arr[0]");
+  });
+
+  it("should print chained index access", () => {
+    const ast: AST = {
+      type: "IndexExpression",
+      object: {
+        type: "IndexExpression",
+        object: { type: "SymbolExpression", name: "arr" },
+        index: { type: "LiteralExpression", value: 0 },
+      },
+      index: { type: "LiteralExpression", value: 1 },
+    };
+    deepStrictEqual(printExpr(ast), "arr[0][1]");
+  });
+});
+
 describe("printAll", () => {
   it("should print multiple AST nodes joined by newlines", () => {
     const asts: AST[] = [

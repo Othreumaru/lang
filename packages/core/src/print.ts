@@ -61,6 +61,12 @@ export const printExpr = (ast: AST): string => {
       return `from "${ast.module}" import { ${ast.names.join(", ")} }`;
     case "NamespaceImportExpression":
       return `from "${ast.module}" import ${ast.alias}`;
+    case "ArrayExpression": {
+      const els = ast.elements.map((e) => printExpr(e)).join(", ");
+      return `[${els}]`;
+    }
+    case "IndexExpression":
+      return `${printExpr(ast.object)}[${printExpr(ast.index)}]`;
     case "ObjectExpression": {
       if (ast.properties.length === 0) return "{}";
       const props = ast.properties

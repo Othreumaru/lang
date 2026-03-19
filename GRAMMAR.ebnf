@@ -34,12 +34,18 @@ infix_expr  = "(" expression OPERATOR expression ")" ;
 
 (* OPERATOR includes: + - * / === !== > >= < <= && || *)
 
-(* Member access and calls are composed via chaining *)
-member_call_expr = primary ("." IDENT)* ("(" arg_list ")")? ;
+(* Member access, index access, and calls are composed via chaining *)
+member_call_expr = primary (postfix)* ;
+postfix     = "." IDENT
+            | "[" expression "]"
+            | "(" arg_list ")" ;
 arg_list    = (expression ("," expression)*)? ;
-primary     = object_expr | IDENT | "(" expression ")" ;
+primary     = array_expr | object_expr | IDENT | "(" expression ")" ;
 
-(* Object literal — values are any expression *)
+(* Array literal — elements are any expression; evaluates to a frozen array *)
+array_expr  = "[" (expression ("," expression)*)? "]" ;
+
+(* Object literal — values are any expression; evaluates to a frozen object *)
 object_expr = "{" (IDENT ":" expression ("," IDENT ":" expression)*)? "}" ;
 
 (* if with optional else *)
@@ -66,6 +72,8 @@ ALPHA       = [a-zA-Z] ;
 DIGIT       = [0-9] ;
 DOT         = "." ;
 COLON       = ":" ;
+LBRACKET    = "[" ;
+RBRACKET    = "]" ;
 EOF         = end of input ;
 
 (* ── Notes ──────────────────────────────────────────────── *)

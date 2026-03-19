@@ -193,6 +193,14 @@ export const scan = (input: string): Token[] => {
         index++;
         tokens.push({ type: "Colon", offset: start });
         continue;
+      case "[":
+        index++;
+        tokens.push({ type: "LeftBracket", offset: start });
+        continue;
+      case "]":
+        index++;
+        tokens.push({ type: "RightBracket", offset: start });
+        continue;
       case "+":
         index++;
         tokens.push({ type: "Operator", value: "+", offset: start });

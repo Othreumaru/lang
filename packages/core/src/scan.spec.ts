@@ -442,5 +442,32 @@ describe("scan", () => {
         { type: "EOL", offset: 10 },
       ] satisfies Token[]);
     });
+
+    it("should scan an array literal", () => {
+      // "[1, 2]"
+      //  012345
+      const tokens = scan("[1, 2]");
+      deepStrictEqual(tokens, [
+        { type: "LeftBracket", offset: 0 },
+        { type: "Number", value: 1, offset: 1 },
+        { type: "Comma", offset: 2 },
+        { type: "Number", value: 2, offset: 4 },
+        { type: "RightBracket", offset: 5 },
+        { type: "EOL", offset: 6 },
+      ] satisfies Token[]);
+    });
+
+    it("should scan index access", () => {
+      // "arr[0]"
+      //  012345
+      const tokens = scan("arr[0]");
+      deepStrictEqual(tokens, [
+        { type: "Identifier", value: "arr", offset: 0 },
+        { type: "LeftBracket", offset: 3 },
+        { type: "Number", value: 0, offset: 4 },
+        { type: "RightBracket", offset: 5 },
+        { type: "EOL", offset: 6 },
+      ] satisfies Token[]);
+    });
   });
 });

@@ -478,4 +478,65 @@ describe("parse", () => {
       ] satisfies AST[]);
     });
   });
+
+  describe("ArrayExpression", () => {
+    it("should parse an empty array", () => {
+      deepStrictEqual(parse(scan("[]")), [
+        { type: "ArrayExpression", elements: [] },
+      ] satisfies AST[]);
+    });
+
+    it("should parse an array with elements", () => {
+      deepStrictEqual(parse(scan("[1, 2, 3]")), [
+        {
+          type: "ArrayExpression",
+          elements: [
+            { type: "LiteralExpression", value: 1 },
+            { type: "LiteralExpression", value: 2 },
+            { type: "LiteralExpression", value: 3 },
+          ],
+        },
+      ] satisfies AST[]);
+    });
+
+    it("should parse index access on an identifier", () => {
+      deepStrictEqual(parse(scan("arr[0]")), [
+        {
+          type: "IndexExpression",
+          object: { type: "SymbolExpression", name: "arr" },
+          index: { type: "LiteralExpression", value: 0 },
+        },
+      ] satisfies AST[]);
+    });
+
+    it("should parse chained index access", () => {
+      deepStrictEqual(parse(scan("arr[0][1]")), [
+        {
+          type: "IndexExpression",
+          object: {
+            type: "IndexExpression",
+            object: { type: "SymbolExpression", name: "arr" },
+            index: { type: "LiteralExpression", value: 0 },
+          },
+          index: { type: "LiteralExpression", value: 1 },
+        },
+      ] satisfies AST[]);
+    });
+
+    it("should parse index access on an inline array literal", () => {
+      deepStrictEqual(parse(scan("[10, 20][1]")), [
+        {
+          type: "IndexExpression",
+          object: {
+            type: "ArrayExpression",
+            elements: [
+              { type: "LiteralExpression", value: 10 },
+              { type: "LiteralExpression", value: 20 },
+            ],
+          },
+          index: { type: "LiteralExpression", value: 1 },
+        },
+      ] satisfies AST[]);
+    });
+  });
 });
