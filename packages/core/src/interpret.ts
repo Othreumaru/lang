@@ -22,6 +22,18 @@ export const interpret = (node: AST, env: IEnvironment = defaultEnv): any => {
   }
   if (node.type === "CallExpression") {
     const args = node.args.map((arg) => interpret(arg, env));
+    // Method call: obj.method(args) — must call bound to the object so `this` is correct
+    if (
+      typeof node.callee !== "string" &&
+      node.callee.type === "MemberExpression"
+    ) {
+      const obj = interpret(node.callee.object, env) as Record<string, unknown>;
+      const method = obj[node.callee.property];
+      if (typeof method !== "function") {
+        throw new Error(`"${node.callee.property}" is not a function`);
+      }
+      return (method as (...a: unknown[]) => unknown).call(obj, ...args);
+    }
     const callee =
       typeof node.callee === "string"
         ? node.callee

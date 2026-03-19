@@ -73,6 +73,39 @@ describe("interpret", () => {
       };
       deepStrictEqual(interpret(ast, env), 6);
     });
+
+    it("should call a method bound to its object (MemberExpression callee)", () => {
+      const ast: AST = {
+        type: "CallExpression",
+        callee: {
+          type: "MemberExpression",
+          object: {
+            type: "ArrayExpression",
+            elements: [
+              { type: "LiteralExpression", value: 1 },
+              { type: "LiteralExpression", value: 2 },
+              { type: "LiteralExpression", value: 3 },
+            ],
+          },
+          property: "indexOf",
+        },
+        args: [{ type: "LiteralExpression", value: 2 }],
+      };
+      deepStrictEqual(interpret(ast), 1);
+    });
+
+    it("should throw when a MemberExpression callee is not a function", () => {
+      const ast: AST = {
+        type: "CallExpression",
+        callee: {
+          type: "MemberExpression",
+          object: { type: "ArrayExpression", elements: [] },
+          property: "notAMethod",
+        },
+        args: [],
+      };
+      throws(() => interpret(ast), /is not a function/);
+    });
   });
 
   describe("unary minus", () => {

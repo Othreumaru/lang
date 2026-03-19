@@ -73,10 +73,12 @@ export const parse = (tokens: Token[]): AST[] => {
     return params;
   };
 
-  // Consume any trailing .prop and [index] chains.
-  const applyMemberAccess = (node: AST): AST => {
+  // Consume any trailing .prop, [index], and (args) chains.
+  // symbolName: if provided and the first postfix is a plain call, use the string as callee.
+  const applyPostfix = (node: AST, symbolName?: string): AST => {
     let result = node;
-    while (peek().type === "Dot" || peek().type === "LeftBracket") {
+    let first = true;
+    for (;;) {
       if (peek().type === "Dot") {
         advance(); // consume .
         const prop = consumeType("Identifier");
@@ -85,11 +87,28 @@ export const parse = (tokens: Token[]): AST[] => {
           object: result,
           property: prop.value,
         };
-      } else {
+        first = false;
+      } else if (peek().type === "LeftBracket") {
         advance(); // consume [
         const index = parseExpr();
         consumeType("RightBracket");
         result = { type: "IndexExpression", object: result, index };
+        first = false;
+      } else if (peek().type === "LeftParen") {
+        advance(); // consume (
+        const args: AST[] = [];
+        while (peek().type !== "RightParen") {
+          args.push(parseExpr());
+          tryConsume("Comma");
+        }
+        advance(); // consume )
+        // Plain symbol call f(x) uses string callee; all others use AST callee
+        const callee: string | AST =
+          first && symbolName !== undefined ? symbolName : result;
+        result = { type: "CallExpression", callee, args };
+        first = false;
+      } else {
+        break;
       }
     }
     return result;
@@ -173,7 +192,7 @@ export const parse = (tokens: Token[]): AST[] => {
         tryConsume("Comma");
       }
       consumeType("RightBracket");
-      return applyMemberAccess({ type: "ArrayExpression", elements });
+      return applyPostfix({ type: "ArrayExpression", elements });
     }
 
     // Object literal  { key: expr, ... }
@@ -188,7 +207,7 @@ export const parse = (tokens: Token[]): AST[] => {
         properties.push({ key, value });
       }
       consumeType("RightBrace");
-      return applyMemberAccess({ type: "ObjectExpression", properties });
+      return applyPostfix({ type: "ObjectExpression", properties });
     }
 
     // Number literal
@@ -203,29 +222,10 @@ export const parse = (tokens: Token[]): AST[] => {
       return { type: "LiteralExpression", value: t.value };
     }
 
-    // Identifier — may be followed by member access (.prop) and/or call (...)
+    // Identifier — may be followed by any postfix chain (.prop, [idx], (args))
     if (t.type === "Identifier") {
       advance();
-      const afterMember = applyMemberAccess({
-        type: "SymbolExpression",
-        name: t.value,
-      });
-      const hasDotChain =
-        afterMember.type === "MemberExpression" ||
-        afterMember.type === "IndexExpression";
-      if (peek().type === "LeftParen") {
-        advance(); // consume (
-        const args: AST[] = [];
-        while (peek().type !== "RightParen") {
-          args.push(parseExpr());
-          tryConsume("Comma");
-        }
-        advance(); // consume )
-        // string callee for simple calls (e.g. f(1)), AST callee for member calls (e.g. obj.m(1))
-        const callee: string | AST = hasDotChain ? afterMember : t.value;
-        return applyMemberAccess({ type: "CallExpression", callee, args });
-      }
-      return afterMember;
+      return applyPostfix({ type: "SymbolExpression", name: t.value }, t.value);
     }
 
     throw new KSSyntaxError(`Unexpected token: ${t.type}`, t.offset);

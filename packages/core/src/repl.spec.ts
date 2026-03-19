@@ -238,4 +238,49 @@ describe("js repl", () => {
     repl("const x = 42;");
     throws(() => repl("x[0]"), /non-array/);
   });
+
+  it("should support xs.map with a named function", () => {
+    const repl = createRepl();
+    repl("const double = (x) => (x * 2);");
+    repl("const xs = [1, 2, 3];");
+    deepStrictEqual(Array.from(repl("xs.map(double)") as number[]), [2, 4, 6]);
+  });
+
+  it("should support xs.reduce with a named function", () => {
+    const repl = createRepl();
+    repl("const add = (a, b) => (a + b);");
+    repl("const xs = [1, 2, 3];");
+    deepStrictEqual(repl("xs.reduce(add, 0)"), 6);
+  });
+
+  it("should support xs.filter with a named predicate", () => {
+    const repl = createRepl();
+    repl("const gt1 = (x) => (x > 1);");
+    repl("const xs = [1, 2, 3];");
+    deepStrictEqual(Array.from(repl("xs.filter(gt1)") as number[]), [2, 3]);
+  });
+
+  it("should support xs.find", () => {
+    const repl = createRepl();
+    repl("const gt1 = (x) => (x > 1);");
+    repl("const xs = [1, 2, 3];");
+    deepStrictEqual(repl("xs.find(gt1)"), 2);
+  });
+
+  it("should support chained method calls", () => {
+    const repl = createRepl();
+    repl("const double = (x) => (x * 2);");
+    repl("const gt3 = (x) => (x > 3);");
+    repl("const xs = [1, 2, 3];");
+    deepStrictEqual(
+      Array.from(repl("xs.map(double).filter(gt3)") as number[]),
+      [4, 6],
+    );
+  });
+
+  it("should throw when calling a non-function method", () => {
+    const repl = createRepl();
+    repl("const xs = [1, 2];");
+    throws(() => repl("xs.notAMethod()"), /is not a function/);
+  });
 });

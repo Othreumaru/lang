@@ -1,16 +1,15 @@
 from "math" import { sqrt };
 
-const sum = (xs) => xs[0] + xs[1] + xs[2] + xs[3] + xs[4];
+const add = (a, b) => (a + b);
+const square = (x) => (x * x);
 
-const mean = (xs) => (sum(xs) / 5);
+const sum = (xs) => xs.reduce(add, 0);
+
+const mean = (xs) => (sum(xs) / xs.length);
 
 const variance = (xs) =>
   let (m = mean(xs)) (
-    ((xs[0] - m) * (xs[0] - m) +
-     (xs[1] - m) * (xs[1] - m) +
-     (xs[2] - m) * (xs[2] - m) +
-     (xs[3] - m) * (xs[3] - m) +
-     (xs[4] - m) * (xs[4] - m)) / 5
+    sum(xs.map((x) => square((x - m)))) / xs.length
   );
 
 const stddev = (xs) => sqrt(variance(xs));
