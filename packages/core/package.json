@@ -8,10 +8,7 @@
   "scripts": {
     "test": "node --test \"src/**/*.spec.ts\"",
     "test:coverage": "node --test --experimental-test-coverage \"src/**/*.spec.ts\"",
-    "lisp-to-ks-e2e": "node ./src/lisp-to-ks/compile.ts ./e2e/data/sum.lsp ./e2e/data/sum.ks",
-    "ks-to-lisp-e2e": "node ./src/ks-to-lisp/compile.ts ./e2e/data/sum.ks ./e2e/data/sum.lsp",
-    "format:ks": "node ./src/ks/format.ts",
-    "format:lisp": "node ./src/lisp/format.ts"
+    "format:ks": "node ./src/ks/format.ts"
   },
   "license": "ISC",
   "devDependencies": {
