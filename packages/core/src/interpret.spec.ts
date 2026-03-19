@@ -86,6 +86,30 @@ describe("interpret", () => {
     });
   });
 
+  describe("NamespaceImportExpression", () => {
+    it("should bind a whole module as a frozen object", () => {
+      const env = new Environment([], [], defaultEnv);
+      const ast: AST = {
+        type: "NamespaceImportExpression",
+        module: "math",
+        alias: "M",
+      };
+      interpret(ast, env);
+      const M = env.get("M") as Record<string, unknown>;
+      deepStrictEqual(typeof M.sqrt, "function");
+      deepStrictEqual(Object.isFrozen(M), true);
+    });
+
+    it("should throw for an unknown module", () => {
+      const ast: AST = {
+        type: "NamespaceImportExpression",
+        module: "nope",
+        alias: "N",
+      };
+      throws(() => interpret(ast), /not found/);
+    });
+  });
+
   describe("errors", () => {
     it("should throw when calling an undefined function", () => {
       throws(

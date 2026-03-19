@@ -209,6 +209,12 @@ describe("parse", () => {
     it("should throw when 'import' keyword is missing", () => {
       throws(() => parse(scan('from "math" floor;')), /Expected 'import'/);
     });
+
+    it("should parse a namespace import", () => {
+      deepStrictEqual(parse(scan('from "math" import Math;')), [
+        { type: "NamespaceImportExpression", module: "math", alias: "Math" },
+      ] satisfies AST[]);
+    });
   });
 
   describe("and / or expressions", () => {

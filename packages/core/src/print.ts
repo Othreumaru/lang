@@ -59,6 +59,8 @@ export const printExpr = (ast: AST): string => {
     }
     case "ImportExpression":
       return `from "${ast.module}" import { ${ast.names.join(", ")} }`;
+    case "NamespaceImportExpression":
+      return `from "${ast.module}" import ${ast.alias}`;
     case "ObjectExpression": {
       if (ast.properties.length === 0) return "{}";
       const props = ast.properties
@@ -105,6 +107,7 @@ export const print = (ast: AST): string => {
     case "LetExpression":
     case "CondExpression":
     case "ImportExpression":
+    case "NamespaceImportExpression":
       return `${printExpr(ast)};`;
     default:
       return printExpr(ast);

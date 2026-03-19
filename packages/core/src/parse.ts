@@ -4,6 +4,7 @@ import type {
   DefineExpression,
   IfExpression,
   ImportExpression,
+  NamespaceImportExpression,
 } from "./ast.ts";
 import type { Token } from "./token.ts";
 import { KSSyntaxError } from "./error.ts";
@@ -230,6 +231,16 @@ export const parse = (tokens: Token[]): AST[] => {
           "Expected 'import' after module name",
           imp.offset,
         );
+      }
+      // from "mod" import Alias;  — namespace import (whole module as object)
+      if (peek().type === "Identifier") {
+        const alias = consumeType("Identifier").value;
+        tryConsume("Semicolon");
+        return {
+          type: "NamespaceImportExpression",
+          module,
+          alias,
+        } satisfies NamespaceImportExpression;
       }
       const names: string[] = [];
       consumeType("LeftBrace");

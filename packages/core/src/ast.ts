@@ -63,6 +63,12 @@ export type ImportExpression = {
   names: string[];
 };
 
+export type NamespaceImportExpression = {
+  type: "NamespaceImportExpression";
+  module: string;
+  alias: string;
+};
+
 export type ObjectExpression = {
   type: "ObjectExpression";
   properties: { key: string; value: AST }[];
@@ -84,6 +90,7 @@ export type AST =
   | AndExpression
   | OrExpression
   | ImportExpression
+  | NamespaceImportExpression
   | ObjectExpression
   | MemberExpression
   | AtomExpression;

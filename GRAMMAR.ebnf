@@ -12,7 +12,8 @@ statement   = import_stmt
 
 (* ── Statements ─────────────────────────────────────────── *)
 
-import_stmt = "from" STRING "import" "{" ident_list "}" ";"? ;
+import_stmt = "from" STRING "import" ( IDENT | "{" ident_list "}" ) ";"? ;
+                 (* IDENT form: namespace import — binds whole module as a frozen object *)
 ident_list  = IDENT ("," IDENT)* ;
 
 const_stmt  = "const" IDENT "=" (arrow_fn | expression) ";"? ;

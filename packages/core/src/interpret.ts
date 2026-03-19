@@ -97,6 +97,16 @@ export const interpret = (node: AST, env: IEnvironment = defaultEnv): any => {
     }
     return undefined;
   }
+  if (node.type === "NamespaceImportExpression") {
+    const mod = stdlib[node.module];
+    if (!mod) throw new Error(`Module "${node.module}" not found`);
+    const obj = Object.create(null) as Record<string, unknown>;
+    for (const [key, value] of Object.entries(mod)) {
+      obj[key] = value;
+    }
+    env.set(node.alias, Object.freeze(obj));
+    return undefined;
+  }
   if (node.type === "ObjectExpression") {
     const obj = Object.create(null) as Record<string, unknown>;
     for (const { key, value } of node.properties) {

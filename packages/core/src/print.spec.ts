@@ -464,6 +464,26 @@ describe("ImportExpression", () => {
   });
 });
 
+describe("NamespaceImportExpression", () => {
+  it("should print a namespace import via printExpr", () => {
+    const ast: AST = {
+      type: "NamespaceImportExpression",
+      module: "math",
+      alias: "Math",
+    };
+    deepStrictEqual(printExpr(ast), 'from "math" import Math');
+  });
+
+  it("should print a namespace import with semicolon via print", () => {
+    const ast: AST = {
+      type: "NamespaceImportExpression",
+      module: "math",
+      alias: "Math",
+    };
+    deepStrictEqual(print(ast), 'from "math" import Math;');
+  });
+});
+
 describe("errors", () => {
   it("should throw for an unknown top-level AST node type", () => {
     const ast = { type: "UnknownExpression" } as unknown as AST;

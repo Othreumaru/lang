@@ -201,4 +201,16 @@ describe("js repl", () => {
     repl("const p = { x: 1 };");
     throws(() => repl("p.z"), /is not a property/);
   });
+
+  it("should support namespace import and member access", () => {
+    const repl = createRepl();
+    repl('from "math" import Math;');
+    deepStrictEqual(repl("Math.PI"), Math.PI);
+    deepStrictEqual(repl("Math.sqrt(9)"), 3);
+  });
+
+  it("should throw for an unknown module in namespace import", () => {
+    const repl = createRepl();
+    throws(() => repl('from "nope" import Nope;'), /not found/);
+  });
 });
