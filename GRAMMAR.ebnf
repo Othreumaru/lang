@@ -1,0 +1,71 @@
+(* KS (Krzysztof Script) — formal grammar in EBNF *)
+(* Terminals are quoted strings or ALL_CAPS names.  *)
+(* ? marks optional, * means zero-or-more, + one-or-more. *)
+
+(* ── Top level ──────────────────────────────────────────── *)
+
+program     = statement* EOF ;
+
+statement   = import_stmt
+            | const_stmt
+            | expr_stmt ;
+
+(* ── Statements ─────────────────────────────────────────── *)
+
+import_stmt = "from" STRING "import" "{" ident_list "}" ";"? ;
+ident_list  = IDENT ("," IDENT)* ;
+
+const_stmt  = "const" IDENT "=" (arrow_fn | expression) ";"? ;
+arrow_fn    = "(" params ")" "=>" expression ;
+params      = (IDENT ("," IDENT)*)? ;
+
+expr_stmt   = expression ";"? ;
+
+(* ── Expressions ────────────────────────────────────────── *)
+
+expression  = infix_expr
+            | if_expr
+            | call_expr
+            | atom ;
+
+(* Parenthesised infix:  (left OP right) *)
+infix_expr  = "(" expression OPERATOR expression ")" ;
+
+(* OPERATOR includes: + - * / === !== > >= < <= && || *)
+
+(* if with optional else *)
+if_expr     = "if" "(" expression ")" then_block ("else" else_block)? ;
+then_block  = "{" "return" expression ";"? "}" ;
+else_block  = "{" "return" expression ";"? "}" ;
+
+(* Named function call *)
+call_expr   = IDENT "(" (expression ("," expression)*)? ")" ;
+
+(* ── Atoms ──────────────────────────────────────────────── *)
+
+atom        = NUMBER
+            | STRING
+            | BOOL
+            | IDENT ;
+
+(* ── Terminals ──────────────────────────────────────────── *)
+
+BOOL        = "true" | "false" ;
+NUMBER      = "-"? DIGIT+ ("." DIGIT+)? ;
+STRING      = '"' (any char except '"')* '"'
+            | "'" (any char except "'")* "'" ;
+IDENT       = (ALPHA | "_") (ALPHA | DIGIT | "_")* ;
+OPERATOR    = "+" | "-" | "*" | "/" | "===" | "!==" | ">" | ">=" | "<" | "<=" | "&&" | "||" ;
+ALPHA       = [a-zA-Z] ;
+DIGIT       = [0-9] ;
+EOF         = end of input ;
+
+(* ── Notes ──────────────────────────────────────────────── *)
+(*
+  - Negative number literals (e.g. -42) are scanned as a single NUMBER token
+    only when "-" is immediately followed by a digit with no preceding space.
+  - Keywords reserved but not exposed as statements: "let", "return".
+  - Semicolons are always optional.
+  - There is no operator precedence — all infix expressions must be
+    fully parenthesised: (1 + (2 * 3)), not 1 + 2 * 3.
+*)
