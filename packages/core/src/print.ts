@@ -61,7 +61,9 @@ export const printExpr = (ast: AST): string => {
       return `from "${ast.module}" import { ${ast.names.join(", ")} }`;
     case "ObjectExpression": {
       if (ast.properties.length === 0) return "{}";
-      const props = ast.properties.map((p) => `${p.key}: ${printExpr(p.value)}`).join(", ");
+      const props = ast.properties
+        .map((p) => `${p.key}: ${printExpr(p.value)}`)
+        .join(", ");
       return `{ ${props} }`;
     }
     case "MemberExpression":

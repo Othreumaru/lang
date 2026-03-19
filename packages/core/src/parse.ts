@@ -186,7 +186,10 @@ export const parse = (tokens: Token[]): AST[] => {
     // Identifier — may be followed by member access (.prop) and/or call (...)
     if (t.type === "Identifier") {
       advance();
-      const afterMember = applyMemberAccess({ type: "SymbolExpression", name: t.value });
+      const afterMember = applyMemberAccess({
+        type: "SymbolExpression",
+        name: t.value,
+      });
       const hasDotChain = afterMember.type === "MemberExpression";
       if (peek().type === "LeftParen") {
         advance(); // consume (

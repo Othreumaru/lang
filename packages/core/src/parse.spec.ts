@@ -377,7 +377,9 @@ describe("parse", () => {
       deepStrictEqual(parse(scan("{ x: 1 }")), [
         {
           type: "ObjectExpression",
-          properties: [{ key: "x", value: { type: "LiteralExpression", value: 1 } }],
+          properties: [
+            { key: "x", value: { type: "LiteralExpression", value: 1 } },
+          ],
         },
       ] satisfies AST[]);
     });
@@ -461,7 +463,9 @@ describe("parse", () => {
           type: "MemberExpression",
           object: {
             type: "ObjectExpression",
-            properties: [{ key: "x", value: { type: "LiteralExpression", value: 1 } }],
+            properties: [
+              { key: "x", value: { type: "LiteralExpression", value: 1 } },
+            ],
           },
           property: "x",
         },
