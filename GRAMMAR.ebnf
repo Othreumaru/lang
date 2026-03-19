@@ -26,6 +26,7 @@ expr_stmt   = expression ";"? ;
 
 expression  = infix_expr
             | if_expr
+            | let_expr
             | member_call_expr
             | atom ;
 
@@ -52,6 +53,10 @@ object_expr = "{" (IDENT ":" expression ("," IDENT ":" expression)*)? "}" ;
 if_expr     = "if" "(" expression ")" then_block ("else" else_block)? ;
 then_block  = "{" "return" expression ";"? "}" ;
 else_block  = "{" "return" expression ";"? "}" ;
+
+(* let — introduces local bindings scoped to body *)
+let_expr    = "let" "(" let_binding ("," let_binding)* ")" expression ;
+let_binding = IDENT "=" expression ;
 
 (* ── Atoms ──────────────────────────────────────────────── *)
 

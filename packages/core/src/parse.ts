@@ -4,6 +4,7 @@ import type {
   DefineExpression,
   IfExpression,
   ImportExpression,
+  LetExpression,
   NamespaceImportExpression,
 } from "./ast.ts";
 import type { Token } from "./token.ts";
@@ -135,6 +136,23 @@ export const parse = (tokens: Token[]): AST[] => {
       }
       consumeType("RightParen");
       return left;
+    }
+
+    // let (x = expr, ...) body
+    if (t.type === "Keyword" && t.value === "let") {
+      advance();
+      consumeType("LeftParen");
+      const bindings: { name: string; expression: AST }[] = [];
+      while (peek().type !== "RightParen") {
+        const name = consumeType("Identifier").value;
+        consumeType("Assign");
+        const expression = parseExpr();
+        tryConsume("Comma");
+        bindings.push({ name, expression });
+      }
+      consumeType("RightParen");
+      const body = parseExpr();
+      return { type: "LetExpression", bindings, body };
     }
 
     // if (cond) { return then; } else { return else; }

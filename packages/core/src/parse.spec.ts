@@ -539,4 +539,60 @@ describe("parse", () => {
       ] satisfies AST[]);
     });
   });
+
+  describe("LetExpression", () => {
+    it("should parse a let expression with a single binding", () => {
+      deepStrictEqual(parse(scan("let (x = 1) x")), [
+        {
+          type: "LetExpression",
+          bindings: [
+            { name: "x", expression: { type: "LiteralExpression", value: 1 } },
+          ],
+          body: { type: "SymbolExpression", name: "x" },
+        },
+      ] satisfies AST[]);
+    });
+
+    it("should parse a let expression with multiple bindings", () => {
+      deepStrictEqual(parse(scan("let (x = 1, y = 2) (x + y)")), [
+        {
+          type: "LetExpression",
+          bindings: [
+            { name: "x", expression: { type: "LiteralExpression", value: 1 } },
+            { name: "y", expression: { type: "LiteralExpression", value: 2 } },
+          ],
+          body: {
+            type: "CallExpression",
+            callee: "+",
+            args: [
+              { type: "SymbolExpression", name: "x" },
+              { type: "SymbolExpression", name: "y" },
+            ],
+          },
+        },
+      ] satisfies AST[]);
+    });
+
+    it("should parse a let expression where the binding value is an expression", () => {
+      deepStrictEqual(parse(scan("let (sq = (2 * 2)) sq")), [
+        {
+          type: "LetExpression",
+          bindings: [
+            {
+              name: "sq",
+              expression: {
+                type: "CallExpression",
+                callee: "*",
+                args: [
+                  { type: "LiteralExpression", value: 2 },
+                  { type: "LiteralExpression", value: 2 },
+                ],
+              },
+            },
+          ],
+          body: { type: "SymbolExpression", name: "sq" },
+        },
+      ] satisfies AST[]);
+    });
+  });
 });

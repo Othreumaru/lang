@@ -283,4 +283,21 @@ describe("js repl", () => {
     repl("const xs = [1, 2];");
     throws(() => repl("xs.notAMethod()"), /is not a function/);
   });
+
+  it("should evaluate a let expression", () => {
+    const repl = createRepl();
+    deepStrictEqual(repl("let (x = 3, y = 4) (x + y)"), 7);
+  });
+
+  it("should scope let bindings to the body", () => {
+    const repl = createRepl();
+    repl("let (x = 99) x;");
+    throws(() => repl("x"), /is not defined/);
+  });
+
+  it("should support let with a computed binding value", () => {
+    const repl = createRepl();
+    repl("const double = (n) => (n * 2);");
+    deepStrictEqual(repl("let (result = double(5)) result"), 10);
+  });
 });
