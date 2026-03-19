@@ -171,4 +171,34 @@ describe("js repl", () => {
     deepStrictEqual(repl("not(true)"), false);
     deepStrictEqual(repl("not(false)"), true);
   });
+
+  it("should create and access object properties", () => {
+    const repl = createRepl();
+    repl("const point = { x: 3, y: 4 };");
+    deepStrictEqual(repl("point.x"), 3);
+    deepStrictEqual(repl("point.y"), 4);
+  });
+
+  it("should evaluate object property that is an expression", () => {
+    const repl = createRepl();
+    repl("const rect = { area: (3 * 4) };");
+    deepStrictEqual(repl("rect.area"), 12);
+  });
+
+  it("should access property on an inline object literal", () => {
+    const repl = createRepl();
+    deepStrictEqual(repl("{ name: 42 }.name"), 42);
+  });
+
+  it("should support chained member access", () => {
+    const repl = createRepl();
+    repl("const a = { b: { c: 99 } };");
+    deepStrictEqual(repl("a.b.c"), 99);
+  });
+
+  it("should throw when accessing a non-existent property", () => {
+    const repl = createRepl();
+    repl("const p = { x: 1 };");
+    throws(() => repl("p.z"), /is not a property/);
+  });
 });

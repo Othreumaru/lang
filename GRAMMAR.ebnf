@@ -25,7 +25,7 @@ expr_stmt   = expression ";"? ;
 
 expression  = infix_expr
             | if_expr
-            | call_expr
+            | member_call_expr
             | atom ;
 
 (* Parenthesised infix:  (left OP right) *)
@@ -33,13 +33,18 @@ infix_expr  = "(" expression OPERATOR expression ")" ;
 
 (* OPERATOR includes: + - * / === !== > >= < <= && || *)
 
+(* Member access and calls are composed via chaining *)
+member_call_expr = primary ("." IDENT)* ("(" arg_list ")")? ;
+arg_list    = (expression ("," expression)*)? ;
+primary     = object_expr | IDENT | "(" expression ")" ;
+
+(* Object literal — values are any expression *)
+object_expr = "{" (IDENT ":" expression ("," IDENT ":" expression)*)? "}" ;
+
 (* if with optional else *)
 if_expr     = "if" "(" expression ")" then_block ("else" else_block)? ;
 then_block  = "{" "return" expression ";"? "}" ;
 else_block  = "{" "return" expression ";"? "}" ;
-
-(* Named function call *)
-call_expr   = IDENT "(" (expression ("," expression)*)? ")" ;
 
 (* ── Atoms ──────────────────────────────────────────────── *)
 
@@ -58,6 +63,8 @@ IDENT       = (ALPHA | "_") (ALPHA | DIGIT | "_")* ;
 OPERATOR    = "+" | "-" | "*" | "/" | "===" | "!==" | ">" | ">=" | "<" | "<=" | "&&" | "||" ;
 ALPHA       = [a-zA-Z] ;
 DIGIT       = [0-9] ;
+DOT         = "." ;
+COLON       = ":" ;
 EOF         = end of input ;
 
 (* ── Notes ──────────────────────────────────────────────── *)
@@ -68,4 +75,7 @@ EOF         = end of input ;
   - Semicolons are always optional.
   - There is no operator precedence — all infix expressions must be
     fully parenthesised: (1 + (2 * 3)), not 1 + 2 * 3.
+  - Objects are immutable: created with Object.freeze, no property assignment.
+  - Member access chains: a.b.c is (MemberExpression (MemberExpression a b) c).
+  - Method-style calls: obj.method(args) is a CallExpression whose callee is a MemberExpression.
 *)

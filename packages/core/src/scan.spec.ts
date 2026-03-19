@@ -426,5 +426,21 @@ describe("scan", () => {
         { type: "EOL", offset: 35 },
       ] satisfies Token[]);
     });
+
+    it("should scan an object literal with member access", () => {
+      // "{ x: 1 }.x"
+      //  01234567890
+      const tokens = scan("{ x: 1 }.x");
+      deepStrictEqual(tokens, [
+        { type: "LeftBrace", offset: 0 },
+        { type: "Identifier", value: "x", offset: 2 },
+        { type: "Colon", offset: 3 },
+        { type: "Number", value: 1, offset: 5 },
+        { type: "RightBrace", offset: 7 },
+        { type: "Dot", offset: 8 },
+        { type: "Identifier", value: "x", offset: 9 },
+        { type: "EOL", offset: 10 },
+      ] satisfies Token[]);
+    });
   });
 });

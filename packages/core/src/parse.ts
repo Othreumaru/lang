@@ -72,6 +72,21 @@ export const parse = (tokens: Token[]): AST[] => {
     return params;
   };
 
+  // Consume any trailing .prop chains, building nested MemberExpressions.
+  const applyMemberAccess = (node: AST): AST => {
+    let result = node;
+    while (peek().type === "Dot") {
+      advance(); // consume .
+      const prop = consumeType("Identifier");
+      result = {
+        type: "MemberExpression",
+        object: result,
+        property: prop.value,
+      };
+    }
+    return result;
+  };
+
   const parseExpr = (): AST => {
     const t = peek();
 
@@ -141,6 +156,21 @@ export const parse = (tokens: Token[]): AST[] => {
       return { type: "LiteralExpression", value: t.value === "true" };
     }
 
+    // Object literal  { key: expr, ... }
+    if (t.type === "LeftBrace") {
+      advance();
+      const properties: { key: string; value: AST }[] = [];
+      while (peek().type !== "RightBrace") {
+        const key = consumeType("Identifier").value;
+        consumeType("Colon");
+        const value = parseExpr();
+        tryConsume("Comma");
+        properties.push({ key, value });
+      }
+      consumeType("RightBrace");
+      return applyMemberAccess({ type: "ObjectExpression", properties });
+    }
+
     // Number literal
     if (t.type === "Number") {
       advance();
@@ -153,9 +183,11 @@ export const parse = (tokens: Token[]): AST[] => {
       return { type: "LiteralExpression", value: t.value };
     }
 
-    // Identifier or function call
+    // Identifier — may be followed by member access (.prop) and/or call (...)
     if (t.type === "Identifier") {
       advance();
+      const afterMember = applyMemberAccess({ type: "SymbolExpression", name: t.value });
+      const hasDotChain = afterMember.type === "MemberExpression";
       if (peek().type === "LeftParen") {
         advance(); // consume (
         const args: AST[] = [];
@@ -164,9 +196,11 @@ export const parse = (tokens: Token[]): AST[] => {
           tryConsume("Comma");
         }
         advance(); // consume )
-        return { type: "CallExpression", callee: t.value, args };
+        // string callee for simple calls (e.g. f(1)), AST callee for member calls (e.g. obj.m(1))
+        const callee: string | AST = hasDotChain ? afterMember : t.value;
+        return applyMemberAccess({ type: "CallExpression", callee, args });
       }
-      return { type: "SymbolExpression", name: t.value };
+      return afterMember;
     }
 
     throw new KSSyntaxError(`Unexpected token: ${t.type}`, t.offset);

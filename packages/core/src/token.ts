@@ -89,6 +89,16 @@ export type StringToken = {
   value: string;
 };
 
+export type DotToken = {
+  type: "Dot";
+  offset: number;
+};
+
+export type ColonToken = {
+  type: "Colon";
+  offset: number;
+};
+
 export type EOLToken = {
   type: "EOL";
   offset: number;
@@ -101,6 +111,8 @@ export type Token =
   | RightBraceToken
   | SemicolonToken
   | CommaToken
+  | DotToken
+  | ColonToken
   | ArrowToken
   | AssignToken
   | OperatorToken

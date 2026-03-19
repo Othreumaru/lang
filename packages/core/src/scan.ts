@@ -185,6 +185,14 @@ export const scan = (input: string): Token[] => {
         index++;
         tokens.push({ type: "Comma", offset: start });
         continue;
+      case ".":
+        index++;
+        tokens.push({ type: "Dot", offset: start });
+        continue;
+      case ":":
+        index++;
+        tokens.push({ type: "Colon", offset: start });
+        continue;
       case "+":
         index++;
         tokens.push({ type: "Operator", value: "+", offset: start });

@@ -59,6 +59,13 @@ export const printExpr = (ast: AST): string => {
     }
     case "ImportExpression":
       return `from "${ast.module}" import { ${ast.names.join(", ")} }`;
+    case "ObjectExpression": {
+      if (ast.properties.length === 0) return "{}";
+      const props = ast.properties.map((p) => `${p.key}: ${printExpr(p.value)}`).join(", ");
+      return `{ ${props} }`;
+    }
+    case "MemberExpression":
+      return `${printExpr(ast.object)}.${ast.property}`;
     default:
       throw new Error(`Unknown AST node type: ${(ast as AST).type}`);
   }

@@ -365,4 +365,107 @@ describe("parse", () => {
       throws(() => parse(scan("const f = (x")));
     });
   });
+
+  describe("ObjectExpression", () => {
+    it("should parse an empty object literal", () => {
+      deepStrictEqual(parse(scan("{}")), [
+        { type: "ObjectExpression", properties: [] },
+      ] satisfies AST[]);
+    });
+
+    it("should parse an object with one property", () => {
+      deepStrictEqual(parse(scan("{ x: 1 }")), [
+        {
+          type: "ObjectExpression",
+          properties: [{ key: "x", value: { type: "LiteralExpression", value: 1 } }],
+        },
+      ] satisfies AST[]);
+    });
+
+    it("should parse an object with multiple properties", () => {
+      deepStrictEqual(parse(scan("{ x: 1, y: 2 }")), [
+        {
+          type: "ObjectExpression",
+          properties: [
+            { key: "x", value: { type: "LiteralExpression", value: 1 } },
+            { key: "y", value: { type: "LiteralExpression", value: 2 } },
+          ],
+        },
+      ] satisfies AST[]);
+    });
+
+    it("should parse an object with expression values", () => {
+      deepStrictEqual(parse(scan("{ area: (3 * 4) }")), [
+        {
+          type: "ObjectExpression",
+          properties: [
+            {
+              key: "area",
+              value: {
+                type: "CallExpression",
+                callee: "*",
+                args: [
+                  { type: "LiteralExpression", value: 3 },
+                  { type: "LiteralExpression", value: 4 },
+                ],
+              },
+            },
+          ],
+        },
+      ] satisfies AST[]);
+    });
+  });
+
+  describe("MemberExpression", () => {
+    it("should parse member access on an identifier", () => {
+      deepStrictEqual(parse(scan("point.x")), [
+        {
+          type: "MemberExpression",
+          object: { type: "SymbolExpression", name: "point" },
+          property: "x",
+        },
+      ] satisfies AST[]);
+    });
+
+    it("should parse chained member access", () => {
+      deepStrictEqual(parse(scan("a.b.c")), [
+        {
+          type: "MemberExpression",
+          object: {
+            type: "MemberExpression",
+            object: { type: "SymbolExpression", name: "a" },
+            property: "b",
+          },
+          property: "c",
+        },
+      ] satisfies AST[]);
+    });
+
+    it("should parse a method-style call", () => {
+      deepStrictEqual(parse(scan("obj.method(1)")), [
+        {
+          type: "CallExpression",
+          callee: {
+            type: "MemberExpression",
+            object: { type: "SymbolExpression", name: "obj" },
+            property: "method",
+          },
+          args: [{ type: "LiteralExpression", value: 1 }],
+        },
+      ] satisfies AST[]);
+    });
+
+    it("should parse member access on an inline object literal", () => {
+      deepStrictEqual(parse(scan("{ x: 1 }.x")), [
+        {
+          type: "MemberExpression",
+          object: {
+            type: "ObjectExpression",
+            properties: [{ key: "x", value: { type: "LiteralExpression", value: 1 } }],
+          },
+          property: "x",
+        },
+      ] satisfies AST[]);
+    });
+  });
 });

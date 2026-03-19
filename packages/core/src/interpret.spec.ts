@@ -109,4 +109,52 @@ describe("interpret", () => {
       );
     });
   });
+
+  describe("ObjectExpression", () => {
+    it("should create a frozen object with evaluated properties", () => {
+      const ast: AST = {
+        type: "ObjectExpression",
+        properties: [
+          { key: "x", value: { type: "LiteralExpression", value: 3 } },
+          { key: "y", value: { type: "LiteralExpression", value: 4 } },
+        ],
+      };
+      const result = interpret(ast) as Record<string, unknown>;
+      deepStrictEqual(result.x, 3);
+      deepStrictEqual(result.y, 4);
+      deepStrictEqual(Object.isFrozen(result), true);
+    });
+
+    it("should create an empty frozen object", () => {
+      const ast: AST = { type: "ObjectExpression", properties: [] };
+      const result = interpret(ast);
+      deepStrictEqual(Object.isFrozen(result), true);
+      deepStrictEqual(Object.keys(result as object), []);
+    });
+  });
+
+  describe("MemberExpression", () => {
+    it("should access a property of an interpreted object", () => {
+      const ast: AST = {
+        type: "MemberExpression",
+        object: {
+          type: "ObjectExpression",
+          properties: [
+            { key: "n", value: { type: "LiteralExpression", value: 42 } },
+          ],
+        },
+        property: "n",
+      };
+      deepStrictEqual(interpret(ast), 42);
+    });
+
+    it("should throw when the property does not exist", () => {
+      const ast: AST = {
+        type: "MemberExpression",
+        object: { type: "ObjectExpression", properties: [] },
+        property: "missing",
+      };
+      throws(() => interpret(ast), /is not a property/);
+    });
+  });
 });

@@ -97,6 +97,20 @@ export const interpret = (node: AST, env: IEnvironment = defaultEnv): any => {
     }
     return undefined;
   }
+  if (node.type === "ObjectExpression") {
+    const obj = Object.create(null) as Record<string, unknown>;
+    for (const { key, value } of node.properties) {
+      obj[key] = interpret(value, env);
+    }
+    return Object.freeze(obj);
+  }
+  if (node.type === "MemberExpression") {
+    const obj = interpret(node.object, env) as Record<string, unknown>;
+    if (obj == null || !(node.property in Object(obj))) {
+      throw new Error(`"${node.property}" is not a property of the object`);
+    }
+    return obj[node.property];
+  }
   throw new Error(`Unknown AST node type: ${(node as any).type}`);
 };
 

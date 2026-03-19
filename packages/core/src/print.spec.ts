@@ -471,6 +471,49 @@ describe("errors", () => {
   });
 });
 
+describe("ObjectExpression", () => {
+  it("should print an empty object", () => {
+    const ast: AST = { type: "ObjectExpression", properties: [] };
+    deepStrictEqual(printExpr(ast), "{}");
+    deepStrictEqual(print(ast), "{}");
+  });
+
+  it("should print an object with properties", () => {
+    const ast: AST = {
+      type: "ObjectExpression",
+      properties: [
+        { key: "x", value: { type: "LiteralExpression", value: 1 } },
+        { key: "y", value: { type: "LiteralExpression", value: 2 } },
+      ],
+    };
+    deepStrictEqual(printExpr(ast), "{ x: 1, y: 2 }");
+  });
+});
+
+describe("MemberExpression", () => {
+  it("should print simple member access", () => {
+    const ast: AST = {
+      type: "MemberExpression",
+      object: { type: "SymbolExpression", name: "point" },
+      property: "x",
+    };
+    deepStrictEqual(printExpr(ast), "point.x");
+  });
+
+  it("should print chained member access", () => {
+    const ast: AST = {
+      type: "MemberExpression",
+      object: {
+        type: "MemberExpression",
+        object: { type: "SymbolExpression", name: "a" },
+        property: "b",
+      },
+      property: "c",
+    };
+    deepStrictEqual(printExpr(ast), "a.b.c");
+  });
+});
+
 describe("printAll", () => {
   it("should print multiple AST nodes joined by newlines", () => {
     const asts: AST[] = [

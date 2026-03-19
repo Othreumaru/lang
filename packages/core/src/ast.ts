@@ -63,6 +63,17 @@ export type ImportExpression = {
   names: string[];
 };
 
+export type ObjectExpression = {
+  type: "ObjectExpression";
+  properties: { key: string; value: AST }[];
+};
+
+export type MemberExpression = {
+  type: "MemberExpression";
+  object: AST;
+  property: string;
+};
+
 export type AST =
   | DefineExpression
   | DefineFunctionExpression
@@ -73,4 +84,6 @@ export type AST =
   | AndExpression
   | OrExpression
   | ImportExpression
+  | ObjectExpression
+  | MemberExpression
   | AtomExpression;

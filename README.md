@@ -4,10 +4,10 @@ A toy language — **KS** (Krzysztof Script) — with a scanner, parser, interpr
 
 ## Packages
 
-| Package                                  | Description                                          |
-| ---------------------------------------- | ---------------------------------------------------- |
-| [`packages/core`](packages/core)         | Language core — scanner, parser, interpreter, stdlib |
-| [`packages/ks-lsp`](packages/ks-lsp)     | VS Code extension with live parse-error diagnostics  |
+| Package                              | Description                                          |
+| ------------------------------------ | ---------------------------------------------------- |
+| [`packages/core`](packages/core)     | Language core — scanner, parser, interpreter, stdlib |
+| [`packages/ks-lsp`](packages/ks-lsp) | VS Code extension with live parse-error diagnostics  |
 
 ## Language
 
@@ -39,6 +39,7 @@ OPERATOR   = "+" | "-" | "*" | "/" | "===" | "!==" | ">" | ">=" | "<" | "<=" | "
 ```
 
 Key rules:
+
 - **No operator precedence** — all infix expressions must be fully parenthesised: `(1 + (2 * 3))`.
 - **Semicolons are optional** everywhere.
 - **`if` bodies require `return`**: `if (x) { return 1; } else { return 0; }`.
