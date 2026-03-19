@@ -2,7 +2,7 @@ import { describe, it } from "node:test";
 import { deepStrictEqual, throws } from "node:assert/strict";
 import { scan } from "./scan.ts";
 import { parse } from "./parse.ts";
-import type { AST } from "../ast.ts";
+import type { AST } from "./ast.ts";
 
 describe("parse", () => {
   describe("literals", () => {

@@ -4,7 +4,7 @@ import type {
   DefineExpression,
   IfExpression,
   ImportExpression,
-} from "../ast.ts";
+} from "./ast.ts";
 import type { Token } from "./token.ts";
 import { KSSyntaxError } from "./error.ts";
 

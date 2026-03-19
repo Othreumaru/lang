@@ -1,4 +1,4 @@
-import type { AST, IfExpression } from "../ast";
+import type { AST, IfExpression } from "./ast";
 
 const INFIX_OPS = new Set([
   "+",

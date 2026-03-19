@@ -1,6 +1,6 @@
-import { defaultEnv, Environment } from "../environment.ts";
-import type { IEnvironment } from "../environment.ts";
-import { interpretAll } from "../interpret.ts";
+import { defaultEnv, Environment } from "./environment.ts";
+import type { IEnvironment } from "./environment.ts";
+import { interpretAll } from "./interpret.ts";
 import { parse } from "./parse.ts";
 import { scan } from "./scan.ts";
 

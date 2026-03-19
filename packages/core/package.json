@@ -8,7 +8,7 @@
   "scripts": {
     "test": "node --test \"src/**/*.spec.ts\"",
     "test:coverage": "node --test --experimental-test-coverage \"src/**/*.spec.ts\"",
-    "format:ks": "node ./src/ks/format.ts"
+    "format:ks": "node ./src/format.ts"
   },
   "license": "ISC",
   "devDependencies": {

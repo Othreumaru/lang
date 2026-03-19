@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
 import { print, printAll, printExpr } from "./print.ts";
 import { deepStrictEqual, throws } from "node:assert/strict";
-import type { AST } from "../ast.ts";
+import type { AST } from "./ast.ts";
 
 describe("print", () => {
   describe("LiteralExpression", () => {
