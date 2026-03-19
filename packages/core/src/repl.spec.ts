@@ -117,4 +117,58 @@ describe("js repl", () => {
       /"doesNotExist" is not exported/,
     );
   });
+
+  it("should return null from if without else when condition is false", () => {
+    const repl = createRepl();
+    deepStrictEqual(repl("if (false) { return 1; }"), null);
+  });
+
+  it("should throw when calling an undefined function", () => {
+    const repl = createRepl();
+    throws(() => repl("unknownFn(1)"), /is not defined/);
+  });
+
+  it("should throw when referencing an undefined symbol", () => {
+    const repl = createRepl();
+    throws(() => repl("undefinedVar"), /is not defined/);
+  });
+
+  it("should call wrapped stdlib lambda functions", () => {
+    const repl = createRepl();
+    repl('from "math" import { min, max };');
+    deepStrictEqual(repl("min(3, 1, 2)"), 1);
+    deepStrictEqual(repl("max(3, 1, 2)"), 3);
+  });
+
+  it("should call stdlib string functions", () => {
+    const repl = createRepl();
+    repl(
+      'from "string" import { length, toUpperCase, toLowerCase, trim, includes, startsWith, endsWith, slice, concat, repeat, indexOf, replace };',
+    );
+    deepStrictEqual(repl('length("hello")'), 5);
+    deepStrictEqual(repl('toUpperCase("hi")'), "HI");
+    deepStrictEqual(repl('toLowerCase("HI")'), "hi");
+    deepStrictEqual(repl('trim("  hi  ")'), "hi");
+    deepStrictEqual(repl('includes("hello", "ell")'), true);
+    deepStrictEqual(repl('startsWith("hello", "hel")'), true);
+    deepStrictEqual(repl('endsWith("hello", "llo")'), true);
+    deepStrictEqual(repl('slice("hello", 1, 3)'), "el");
+    deepStrictEqual(repl('concat("foo", "bar")'), "foobar");
+    deepStrictEqual(repl('repeat("ha", 3)'), "hahaha");
+    deepStrictEqual(repl('indexOf("hello", "llo")'), 2);
+    deepStrictEqual(repl('replace("hello", "llo", "y")'), "hey");
+  });
+
+  it("should call console.log from stdlib", () => {
+    const repl = createRepl();
+    repl('from "console" import { log };');
+    repl('log("coverage test")');
+  });
+
+  it("should evaluate defaultEnv operators: abs and not", () => {
+    const repl = createRepl();
+    deepStrictEqual(repl("abs(-5)"), 5);
+    deepStrictEqual(repl("not(true)"), false);
+    deepStrictEqual(repl("not(false)"), true);
+  });
 });

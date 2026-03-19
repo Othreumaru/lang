@@ -13,10 +13,12 @@ export const parse = (tokens: Token[]): AST[] => {
 
   const peek = (offset = 0): Token => {
     const i = index + offset;
-    if (i < tokens.length) return tokens[i];
+    if (i < tokens.length) {
+      return tokens[i];
+    }
     throw new KSSyntaxError(
       "Unexpected end of input",
-      tokens[tokens.length - 1]?.offset ?? 0,
+      tokens[tokens.length - 1].offset,
     );
   };
 
@@ -172,6 +174,14 @@ export const parse = (tokens: Token[]): AST[] => {
 
   const parseStatement = (): AST => {
     const t = peek();
+
+    // Two consecutive identifiers is never valid — likely a misspelled keyword
+    if (t.type === "Identifier" && peek(1).type === "Identifier") {
+      throw new KSSyntaxError(
+        `Unexpected identifier '${t.value}'; did you mean 'const' or 'let'?`,
+        t.offset,
+      );
+    }
 
     // from "module" import name1, name2;
     if (t.type === "Keyword" && t.value === "from") {

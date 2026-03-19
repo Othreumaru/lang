@@ -283,6 +283,24 @@ describe("print", () => {
       };
       deepStrictEqual(printExpr(ast), "const double = (n) => (2 * n)");
     });
+    it("should print an arrow function with if-without-else body multi-line", () => {
+      const ast: AST = {
+        type: "DefineFunctionExpression",
+        name: "guard",
+        params: ["x"],
+        body: {
+          type: "IfExpression",
+          condition: { type: "SymbolExpression", name: "x" },
+          thenBranch: { type: "LiteralExpression", value: 1 },
+          elseBranch: null,
+        },
+      };
+      deepStrictEqual(
+        print(ast),
+        "const guard = (x) =>\n  if (x) {\n    return 1;\n  };",
+      );
+    });
+
     it("should print an arrow function with if body multi-line", () => {
       const ast: AST = {
         type: "DefineFunctionExpression",

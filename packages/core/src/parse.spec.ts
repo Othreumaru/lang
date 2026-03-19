@@ -40,6 +40,12 @@ describe("parse", () => {
   });
 
   describe("infix expressions", () => {
+    it("should parse a parenthesised expression with no infix op", () => {
+      deepStrictEqual(parse(scan("(42)")), [
+        { type: "LiteralExpression", value: 42 },
+      ] satisfies AST[]);
+    });
+
     it("should parse (1 + 2)", () => {
       deepStrictEqual(parse(scan("(1 + 2)")), [
         {
@@ -329,6 +335,34 @@ describe("parse", () => {
         () => parse(scan("if (x) { return a; } else { 42; }")),
         /Expected 'return' in else body/,
       );
+    });
+
+    it("should throw on two consecutive identifiers (misspelled keyword)", () => {
+      throws(
+        () => parse(scan("constx isPositive = 42;")),
+        /Unexpected identifier 'constx'/,
+      );
+    });
+
+    it("should not treat nested parens as arrow function (covers depth++ in isArrowFunction)", () => {
+      // const result = (f(x)) — isArrowFunction sees a LeftParen inside the outer parens,
+      // incrementing depth, then correctly returns false (no Arrow token follows).
+      deepStrictEqual(parse(scan("const result = (f(x));")), [
+        {
+          type: "DefineExpression",
+          name: "result",
+          expression: {
+            type: "CallExpression",
+            callee: "f",
+            args: [{ type: "SymbolExpression", name: "x" }],
+          },
+        },
+      ] satisfies AST[]);
+    });
+
+    it("should treat unclosed parens after = as an expression (not arrow function)", () => {
+      // isArrowFunction scans to end-of-tokens without finding =>, falls back to parseExpr
+      throws(() => parse(scan("const f = (x")));
     });
   });
 });
