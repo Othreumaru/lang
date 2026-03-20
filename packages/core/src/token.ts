@@ -61,7 +61,6 @@ export type KeywordToken = {
   offset: number;
   value:
     | "const"
-    | "let"
     | "return"
     | "if"
     | "else"

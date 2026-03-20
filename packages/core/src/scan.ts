@@ -3,7 +3,6 @@ import { KSSyntaxError } from "./error.ts";
 
 const KEYWORDS = new Set([
   "const",
-  "let",
   "return",
   "if",
   "else",

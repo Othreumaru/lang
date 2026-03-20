@@ -30,7 +30,7 @@
         },
         {
           "name": "storage.type.ks",
-          "match": "\\b(const|let)\\b"
+          "match": "\\b(const)\\b"
         },
         {
           "name": "keyword.control.import.ks",

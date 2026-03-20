@@ -17,6 +17,8 @@ import_stmt = "from" STRING "import" ( IDENT | "{" ident_list "}" ) ";"? ;
 ident_list  = IDENT ("," IDENT)* ;
 
 const_stmt  = "const" IDENT "=" (arrow_fn | expression) ";"? ;
+const_expr  = "const" "(" const_binding ("," const_binding)* ")" expression ;
+const_binding = IDENT "=" expression ;
 arrow_fn    = "(" params ")" "=>" expression ;
 params      = (IDENT ("," IDENT)*)? ;
 
@@ -26,7 +28,7 @@ expr_stmt   = expression ";"? ;
 
 expression  = infix_expr
             | if_expr
-            | let_expr
+            | const_expr
             | member_call_expr
             | atom ;
 
@@ -53,10 +55,6 @@ object_expr = "{" (IDENT ":" expression ("," IDENT ":" expression)*)? "}" ;
 if_expr     = "if" "(" expression ")" then_block ("else" else_block)? ;
 then_block  = "{" "return" expression ";"? "}" ;
 else_block  = "{" "return" expression ";"? "}" ;
-
-(* let — introduces local bindings scoped to body *)
-let_expr    = "let" "(" let_binding ("," let_binding)* ")" expression ;
-let_binding = IDENT "=" expression ;
 
 (* ── Atoms ──────────────────────────────────────────────── *)
 
@@ -85,7 +83,7 @@ EOF         = end of input ;
 (*
   - Negative number literals (e.g. -42) are scanned as a single NUMBER token
     only when "-" is immediately followed by a digit with no preceding space.
-  - Keywords reserved but not exposed as statements: "let", "return".
+  - Keywords reserved but not exposed as statements: "return".
   - Semicolons are always optional.
   - There is no operator precedence — all infix expressions must be
     fully parenthesised: (1 + (2 * 3)), not 1 + 2 * 3.

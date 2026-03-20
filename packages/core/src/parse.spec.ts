@@ -319,7 +319,7 @@ describe("parse", () => {
     });
 
     it("should throw when expected token type is missing", () => {
-      throws(() => parse(scan("const 42")), /Expected token Identifier/);
+      throws(() => parse(scan("const 42")), /Expected token LeftParen/);
     });
 
     it("should throw when input ends unexpectedly", () => {
@@ -542,7 +542,7 @@ describe("parse", () => {
 
   describe("LetExpression", () => {
     it("should parse a let expression with a single binding", () => {
-      deepStrictEqual(parse(scan("let (x = 1) x")), [
+      deepStrictEqual(parse(scan("const (x = 1) x")), [
         {
           type: "LetExpression",
           bindings: [
@@ -554,7 +554,7 @@ describe("parse", () => {
     });
 
     it("should parse a let expression with multiple bindings", () => {
-      deepStrictEqual(parse(scan("let (x = 1, y = 2) (x + y)")), [
+      deepStrictEqual(parse(scan("const (x = 1, y = 2) (x + y)")), [
         {
           type: "LetExpression",
           bindings: [
@@ -574,7 +574,7 @@ describe("parse", () => {
     });
 
     it("should parse a let expression where the binding value is an expression", () => {
-      deepStrictEqual(parse(scan("let (sq = (2 * 2)) sq")), [
+      deepStrictEqual(parse(scan("const (sq = (2 * 2)) sq")), [
         {
           type: "LetExpression",
           bindings: [

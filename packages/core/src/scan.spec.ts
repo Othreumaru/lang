@@ -240,10 +240,10 @@ describe("scan", () => {
       ] satisfies Token[]);
     });
 
-    it("should scan let", () => {
+    it("should scan let as an identifier (no longer a keyword)", () => {
       const tokens = scan("let");
       deepStrictEqual(tokens, [
-        { type: "Keyword", value: "let", offset: 0 },
+        { type: "Identifier", value: "let", offset: 0 },
         { type: "EOL", offset: 3 },
       ] satisfies Token[]);
     });

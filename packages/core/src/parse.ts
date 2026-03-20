@@ -138,8 +138,8 @@ export const parse = (tokens: Token[]): AST[] => {
       return left;
     }
 
-    // let (x = expr, ...) body
-    if (t.type === "Keyword" && t.value === "let") {
+    // const (x = expr, ...) body — local scoped binding expression
+    if (t.type === "Keyword" && t.value === "const") {
       advance();
       consumeType("LeftParen");
       const bindings: { name: string; expression: AST }[] = [];
@@ -255,7 +255,7 @@ export const parse = (tokens: Token[]): AST[] => {
     // Two consecutive identifiers is never valid — likely a misspelled keyword
     if (t.type === "Identifier" && peek(1).type === "Identifier") {
       throw new KSSyntaxError(
-        `Unexpected identifier '${t.value}'; did you mean 'const' or 'let'?`,
+        `Unexpected identifier '${t.value}'; did you mean 'const'?`,
         t.offset,
       );
     }
@@ -297,7 +297,11 @@ export const parse = (tokens: Token[]): AST[] => {
     }
 
     // const x = expr;  or  const f = (params) => expr;
-    if (t.type === "Keyword" && t.value === "const") {
+    if (
+      t.type === "Keyword" &&
+      t.value === "const" &&
+      peek(1).type === "Identifier"
+    ) {
       advance();
       const name = consumeType("Identifier").value;
       consumeType("Assign");
