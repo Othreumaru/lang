@@ -14,8 +14,8 @@ export const interpret = (node: AST, env: IEnvironment = defaultEnv): any => {
       const localEnv = new Environment(node.params, args, env);
       return interpret(node.body, localEnv);
     };
-    env.set(node.name, func);
-    return undefined;
+    if (node.name) env.set(node.name, func);
+    return node.name ? undefined : func;
   }
   if (node.type === "LiteralExpression") {
     return node.value;

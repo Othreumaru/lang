@@ -26,6 +26,9 @@ export const printExpr = (ast: AST): string => {
     case "DefineExpression":
       return `const ${ast.name} = ${printExpr(ast.expression)}`;
     case "DefineFunctionExpression":
+      if (!ast.name) {
+        return `(${ast.params.join(", ")}) => ${printExpr(ast.body)}`;
+      }
       return `const ${ast.name} = (${ast.params.join(", ")}) => ${printExpr(ast.body)}`;
     case "IfExpression": {
       const thenPart = `{ return ${printExpr(ast.thenBranch)}; }`;

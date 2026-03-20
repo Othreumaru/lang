@@ -118,6 +118,14 @@ export const parse = (tokens: Token[]): AST[] => {
   const parseExpr = (): AST => {
     const t = peek();
 
+    // (params) => expr  — inline arrow function (lambda expression)
+    if (isArrowFunction()) {
+      const params = parseArrowParams();
+      consumeType("Arrow");
+      const body = parseExpr();
+      return { type: "DefineFunctionExpression", name: "", params, body };
+    }
+
     // (expr op expr)  — parenthesised infix expression
     if (t.type === "LeftParen") {
       advance();

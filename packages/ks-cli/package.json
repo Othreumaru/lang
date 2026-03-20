@@ -1,0 +1,16 @@
+{
+  "name": "@ks/cli",
+  "version": "1.0.0",
+  "type": "module",
+  "bin": {
+    "ks": "./src/cli.ts"
+  },
+  "scripts": {
+    "start": "node --experimental-transform-types ./src/cli.ts"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@ks/core": "*",
+    "@types/node": "^22.15.21"
+  }
+}

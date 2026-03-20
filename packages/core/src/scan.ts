@@ -231,7 +231,6 @@ export const scan = (input: string): Token[] => {
             type: "Keyword",
             value: word as
               | "const"
-              | "let"
               | "return"
               | "if"
               | "else"
